@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="c#," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="IEnumerator和IEnumerable从名字常来看，IEnumerator是枚举器的意思，IEnumerable是可枚举的意思。了解了两个接口代表的含义后，接着看源码：">
+<meta name="keywords" content="c#">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IEnumerator和IEnumerable详解">
+<meta property="og:url" content="http://yoursite.com/2018/03/28/IEnumerator和IEnumerable详解/index.html">
+<meta property="og:site_name" content="It&#39;s empty">
+<meta property="og:description" content="IEnumerator和IEnumerable从名字常来看，IEnumerator是枚举器的意思，IEnumerable是可枚举的意思。了解了两个接口代表的含义后，接着看源码：">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-03-28T14:09:09.162Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="IEnumerator和IEnumerable详解">
+<meta name="twitter:description" content="IEnumerator和IEnumerable从名字常来看，IEnumerator是枚举器的意思，IEnumerable是可枚举的意思。了解了两个接口代表的含义后，接着看源码：">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/03/28/IEnumerator和IEnumerable详解/"/>
+
+
+
+
+
+  <title>IEnumerator和IEnumerable详解 | It's empty</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">It's empty</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/28/IEnumerator和IEnumerable详解/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="blueberryzzz">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="It's empty">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">IEnumerator和IEnumerable详解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-28T22:00:00+08:00">
+                2018-03-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="IEnumerator和IEnumerable"><a href="#IEnumerator和IEnumerable" class="headerlink" title="IEnumerator和IEnumerable"></a>IEnumerator和IEnumerable</h1><p>从名字常来看，IEnumerator是枚举器的意思，IEnumerable是可枚举的意思。<br>了解了两个接口代表的含义后，接着看源码：<br><a id="more"></a><br>IEnumerator：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">public interface IEnumerator</span><br><span class="line">    &#123;</span><br><span class="line">        // Interfaces are not serializable</span><br><span class="line">        // Advances the enumerator to the next element of the enumeration and</span><br><span class="line">        // returns a boolean indicating whether an element is available. Upon</span><br><span class="line">        // creation, an enumerator is conceptually positioned before the first</span><br><span class="line">        // element of the enumeration, and the first call to MoveNext </span><br><span class="line">        // brings the first element of the enumeration into view.</span><br><span class="line">        // </span><br><span class="line">        bool MoveNext();</span><br><span class="line">    </span><br><span class="line">        // Returns the current element of the enumeration. The returned value is</span><br><span class="line">        // undefined before the first call to MoveNext and following a</span><br><span class="line">        // call to MoveNext that returned false. Multiple calls to</span><br><span class="line">        // GetCurrent with no intervening calls to MoveNext </span><br><span class="line">        // will return the same object.</span><br><span class="line">        // </span><br><span class="line">        Object Current &#123;</span><br><span class="line">            get; </span><br><span class="line">        &#125;</span><br><span class="line">    </span><br><span class="line">        // Resets the enumerator to the beginning of the enumeration, starting over.</span><br><span class="line">        // The preferred behavior for Reset is to return the exact same enumeration.</span><br><span class="line">        // This means if you modify the underlying collection then call Reset, your</span><br><span class="line">        // IEnumerator will be invalid, just as it would have been if you had called</span><br><span class="line">        // MoveNext or Current.</span><br><span class="line">        //</span><br><span class="line">        void Reset();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>IEnumerable：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public interface IEnumerable</span><br><span class="line">&#123;</span><br><span class="line">    // Interfaces are not serializable</span><br><span class="line">    // Returns an IEnumerator for this enumerable Object.  The enumerator provides</span><br><span class="line">    // a simple way to access all the contents of a collection.</span><br><span class="line">    [Pure]</span><br><span class="line">    [DispId(-4)]</span><br><span class="line">    IEnumerator GetEnumerator();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>发现IEnumerable只有一个GetEnumerator函数，返回值是IEnumerator类型，从注释我们可以得知IEnumerable代表继承此接口的类可以获取一个IEnumerator来实现枚举这个类中包含的集合中的元素的功能（比如List<t>,ArrayList,Dictionary等继承了IEnumeratble接口的类）。</t></p>
+<h1 id="用foreach来了解IEnumerable，IEnumerator的工作原理"><a href="#用foreach来了解IEnumerable，IEnumerator的工作原理" class="headerlink" title="用foreach来了解IEnumerable，IEnumerator的工作原理"></a>用foreach来了解IEnumerable，IEnumerator的工作原理</h1><p>我们模仿ArrayList来实现一个简单的ConstArrayList，然后用foreach遍历。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">//一个常量的数组，用于foreach遍历</span><br><span class="line">class ConstArrayList : IEnumerable</span><br><span class="line">&#123;</span><br><span class="line">    public int[] constItems = new int[] &#123; 1, 2, 3, 4, 5 &#125;;</span><br><span class="line">    public IEnumerator GetEnumerator()</span><br><span class="line">    &#123;</span><br><span class="line">        return new ConstArrayListEnumeratorSimple(this);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">//这个常量数组的迭代器</span><br><span class="line">class ConstArrayListEnumeratorSimple : IEnumerator</span><br><span class="line">&#123;</span><br><span class="line">    ConstArrayList list;</span><br><span class="line">    int index;</span><br><span class="line">    int currentElement;</span><br><span class="line">    public ConstArrayListEnumeratorSimple(ConstArrayList _list)</span><br><span class="line">    &#123;</span><br><span class="line">        list = _list;</span><br><span class="line">        index = -1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public object Current</span><br><span class="line">    &#123;</span><br><span class="line">        get</span><br><span class="line">        &#123;</span><br><span class="line">            return currentElement;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public bool MoveNext()</span><br><span class="line">    &#123;</span><br><span class="line">        if(index &lt; list.constItems.Length - 1)</span><br><span class="line">        &#123;</span><br><span class="line">            currentElement = list.constItems[++index];</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line">        else</span><br><span class="line">        &#123;</span><br><span class="line">            currentElement = -1;</span><br><span class="line">            return false;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void Reset()</span><br><span class="line">    &#123;</span><br><span class="line">        index = -1;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">class Program</span><br><span class="line">&#123;    </span><br><span class="line">    static void Main(string[] args)</span><br><span class="line">    &#123;</span><br><span class="line">        ConstArrayList constArrayList = new ConstArrayList();</span><br><span class="line">        foreach(int item in constArrayList)</span><br><span class="line">        &#123;</span><br><span class="line">            WriteLine(item);</span><br><span class="line">        &#125;</span><br><span class="line">        ReadKey();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>输出结果：<br>1<br>2<br>3<br>4<br>5</p>
+<p>代码达到了遍历效果，但是在用foreach遍历时，IEnumerator和IEnumerable究竟是如何运行的，我们可以通过增加增加日志可以直观的看到原因。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">//一个常量的数组，用于foreach遍历</span><br><span class="line">class ConstArrayList : IEnumerable</span><br><span class="line">&#123;</span><br><span class="line">    public int[] constItems = new int[] &#123; 1, 2, 3, 4, 5 &#125;;</span><br><span class="line">    public IEnumerator GetEnumerator()</span><br><span class="line">    &#123;</span><br><span class="line">        WriteLine(&quot;GetIEnumerator&quot;);</span><br><span class="line">        return new ConstArrayListEnumeratorSimple(this);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">//这个常量数组的迭代器</span><br><span class="line">class ConstArrayListEnumeratorSimple : IEnumerator</span><br><span class="line">&#123;</span><br><span class="line">    ConstArrayList list;</span><br><span class="line">    int index;</span><br><span class="line">    int currentElement;</span><br><span class="line">    public ConstArrayListEnumeratorSimple(ConstArrayList _list)</span><br><span class="line">    &#123;</span><br><span class="line">        list = _list;</span><br><span class="line">        index = -1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public object Current</span><br><span class="line">    &#123;</span><br><span class="line">        get</span><br><span class="line">        &#123;</span><br><span class="line">            WriteLine(&quot;Current&quot;);</span><br><span class="line">            return currentElement;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public bool MoveNext()</span><br><span class="line">    &#123;</span><br><span class="line">        if(index &lt; list.constItems.Length - 1)</span><br><span class="line">        &#123;</span><br><span class="line">            WriteLine(&quot;MoveNext true&quot;);   </span><br><span class="line">            currentElement = list.constItems[++index];</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line">        else</span><br><span class="line">        &#123;</span><br><span class="line">            WriteLine(&quot;MoveNext false&quot;);</span><br><span class="line">            currentElement = -1;</span><br><span class="line">            return false;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void Reset()</span><br><span class="line">    &#123;</span><br><span class="line">        WriteLine(&quot;Reset&quot;);</span><br><span class="line">        index = -1;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">class Program</span><br><span class="line">&#123;    </span><br><span class="line">    static void Main(string[] args)</span><br><span class="line">    &#123;</span><br><span class="line">        ConstArrayList constArrayList = new ConstArrayList();</span><br><span class="line">        foreach(int item in constArrayList)</span><br><span class="line">        &#123;</span><br><span class="line">            WriteLine(item);</span><br><span class="line">        &#125;</span><br><span class="line">        ReadKey();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>输出结果：<br>GetIEnumerator<br>MoveNext true<br>Current<br>1<br>MoveNext true<br>Current<br>2<br>MoveNext true<br>Current<br>3<br>MoveNext true<br>Current<br>4<br>MoveNext true<br>Current<br>5<br>MoveNext false</p>
+<p>通过输出结果，我们可以发现，foreach在运行时会先调用ConstArrayList的GetIEnumerator函数获取一个ConstArrayListEnumeratorSimple，之后通过循环调用ConstArrayListEnumeratorSimple的MoveNext函数，index后移，更新Current属性，然后返回Current属性，直到MoveNext返回false。</p>
+<p>总结一下：<br>GetIEnumerator()负责获取枚举器。<br>MoveNext()负责让Current获取下一个值，并判断遍历是否结束。<br>Current负责返回当前指向的值。<br>Rest()负责重置枚举器的状态（在foreach中没有用到）<br>这些就是IEnumerable，IEnumerator的基本工作原理了。</p>
+<p>其次我们发现：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ConstArrayList constArrayList = new ConstArrayList();</span><br><span class="line">foreach(int item in constArrayList)</span><br><span class="line">&#123;</span><br><span class="line">    writeLine(item);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>其实就等价于：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ConstArrayList constArrayList = new ConstArrayList();</span><br><span class="line">IEnumerator enumeratorSimple = constArrayList.GetEnumerator();</span><br><span class="line">while (enumeratorSimple.MoveNext())</span><br><span class="line">&#123;</span><br><span class="line">    int item = (int)enumeratorSimple.Current;</span><br><span class="line">    WriteLine(item);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>也就是说foreach其实是一种语法糖，用来简化对可枚举元素的遍历代码。而被遍历的类通过实现IEnumerable接口和一个相关的IEnumerator枚举器来实现遍历功能。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/c/" rel="tag"># c#</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/27/hello-world/" rel="next" title="Hello World">
+                <i class="fa fa-chevron-left"></i> Hello World
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="blueberryzzz" />
+          <p class="site-author-name" itemprop="name">blueberryzzz</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#IEnumerator和IEnumerable"><span class="nav-number">1.</span> <span class="nav-text">IEnumerator和IEnumerable</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#用foreach来了解IEnumerable，IEnumerator的工作原理"><span class="nav-number">2.</span> <span class="nav-text">用foreach来了解IEnumerable，IEnumerator的工作原理</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">blueberryzzz</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Gemini
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
