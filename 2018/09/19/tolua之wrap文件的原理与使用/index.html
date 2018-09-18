@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="lua,tolua," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="什么是wrap文件每个wrap文件都是对一个c#类的包装，在lua中，通过对wrap类中的函数调用，间接的对c#实例进行操作。">
+<meta name="keywords" content="lua,tolua">
+<meta property="og:type" content="article">
+<meta property="og:title" content="tolua之wrap文件的原理与使用">
+<meta property="og:url" content="http://yoursite.com/2018/09/19/tolua之wrap文件的原理与使用/index.html">
+<meta property="og:site_name" content="It&#39;s empty">
+<meta property="og:description" content="什么是wrap文件每个wrap文件都是对一个c#类的包装，在lua中，通过对wrap类中的函数调用，间接的对c#实例进行操作。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2018/09/19/tolua之wrap文件的原理与使用/MainProcess.svg">
+<meta property="og:image" content="http://yoursite.com/2018/09/19/tolua之wrap文件的原理与使用/GenerateClassWraps.svg">
+<meta property="og:image" content="http://yoursite.com/2018/09/19/tolua之wrap文件的原理与使用/GameObjectClass.svg">
+<meta property="og:image" content="http://yoursite.com/2018/09/19/tolua之wrap文件的原理与使用/GameObjectDamo.svg">
+<meta property="og:image" content="http://yoursite.com/2018/09/19/tolua之wrap文件的原理与使用/ObjectsDamo.svg">
+<meta property="og:updated_time" content="2018-09-18T17:00:26.261Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="tolua之wrap文件的原理与使用">
+<meta name="twitter:description" content="什么是wrap文件每个wrap文件都是对一个c#类的包装，在lua中，通过对wrap类中的函数调用，间接的对c#实例进行操作。">
+<meta name="twitter:image" content="http://yoursite.com/2018/09/19/tolua之wrap文件的原理与使用/MainProcess.svg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/09/19/tolua之wrap文件的原理与使用/"/>
+
+
+
+
+
+  <title>tolua之wrap文件的原理与使用 | It's empty</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">It's empty</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/19/tolua之wrap文件的原理与使用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="blueberryzzz">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="It's empty">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">tolua之wrap文件的原理与使用</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-19T00:58:11+08:00">
+                2018-09-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="什么是wrap文件"><a href="#什么是wrap文件" class="headerlink" title="什么是wrap文件"></a>什么是wrap文件</h1><p>每个wrap文件都是对一个c#类的包装，在lua中，通过对wrap类中的函数调用，间接的对c#实例进行操作。<br><a id="more"></a></p>
+<h1 id="wrap类文件生成和使用的总体流程"><a href="#wrap类文件生成和使用的总体流程" class="headerlink" title="wrap类文件生成和使用的总体流程"></a>wrap类文件生成和使用的总体流程</h1><p><img src="/2018/09/19/tolua之wrap文件的原理与使用/MainProcess.svg" alt="">  </p>
+<h1 id="生成一个wrap文件的流程"><a href="#生成一个wrap文件的流程" class="headerlink" title="生成一个wrap文件的流程"></a>生成一个wrap文件的流程</h1><p><img src="/2018/09/19/tolua之wrap文件的原理与使用/GenerateClassWraps.svg" alt=""><br>这部分主要通过分析类的反射信息完成。</p>
+<h1 id="wrap文件内容解析"><a href="#wrap文件内容解析" class="headerlink" title="wrap文件内容解析"></a>wrap文件内容解析</h1><p>使用UnityEngine_GameObjectWrap.cs进行举例。</p>
+<h2 id="注册部分"><a href="#注册部分" class="headerlink" title="注册部分"></a>注册部分</h2><figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Register</span>(<span class="params">LuaState L</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    L.BeginClass(<span class="keyword">typeof</span>(UnityEngine.GameObject), <span class="keyword">typeof</span>(UnityEngine.Object));</span><br><span class="line">    L.RegFunction(<span class="string">"CreatePrimitive"</span>, CreatePrimitive);</span><br><span class="line">    L.RegFunction(<span class="string">"GetComponent"</span>, GetComponent);</span><br><span class="line">    L.RegFunction(<span class="string">"GetComponentInChildren"</span>, GetComponentInChildren);</span><br><span class="line">    L.RegFunction(<span class="string">"GetComponentInParent"</span>, GetComponentInParent);</span><br><span class="line">    L.RegFunction(<span class="string">"GetComponents"</span>, GetComponents);</span><br><span class="line">    L.RegFunction(<span class="string">"GetComponentsInChildren"</span>, GetComponentsInChildren);</span><br><span class="line">    L.RegFunction(<span class="string">"GetComponentsInParent"</span>, GetComponentsInParent);</span><br><span class="line">    L.RegFunction(<span class="string">"SetActive"</span>, SetActive);</span><br><span class="line">    L.RegFunction(<span class="string">"CompareTag"</span>, CompareTag);</span><br><span class="line">    L.RegFunction(<span class="string">"FindGameObjectWithTag"</span>, FindGameObjectWithTag);</span><br><span class="line">    L.RegFunction(<span class="string">"FindWithTag"</span>, FindWithTag);</span><br><span class="line">    L.RegFunction(<span class="string">"FindGameObjectsWithTag"</span>, FindGameObjectsWithTag);</span><br><span class="line">    L.RegFunction(<span class="string">"Find"</span>, Find);</span><br><span class="line">    L.RegFunction(<span class="string">"AddComponent"</span>, AddComponent);</span><br><span class="line">    L.RegFunction(<span class="string">"BroadcastMessage"</span>, BroadcastMessage);</span><br><span class="line">    L.RegFunction(<span class="string">"SendMessageUpwards"</span>, SendMessageUpwards);</span><br><span class="line">    L.RegFunction(<span class="string">"SendMessage"</span>, SendMessage);</span><br><span class="line">    L.RegFunction(<span class="string">"New"</span>, _CreateUnityEngine_GameObject);</span><br><span class="line">    L.RegFunction(<span class="string">"__eq"</span>, op_Equality);</span><br><span class="line">    L.RegFunction(<span class="string">"__tostring"</span>, ToLua.op_ToString);</span><br><span class="line">    L.RegVar(<span class="string">"transform"</span>, get_transform, <span class="literal">null</span>);</span><br><span class="line">    L.RegVar(<span class="string">"layer"</span>, get_layer, set_layer);</span><br><span class="line">    L.RegVar(<span class="string">"activeSelf"</span>, get_activeSelf, <span class="literal">null</span>);</span><br><span class="line">    L.RegVar(<span class="string">"activeInHierarchy"</span>, get_activeInHierarchy, <span class="literal">null</span>);</span><br><span class="line">    L.RegVar(<span class="string">"isStatic"</span>, get_isStatic, set_isStatic);</span><br><span class="line">    L.RegVar(<span class="string">"tag"</span>, get_tag, set_tag);</span><br><span class="line">    L.RegVar(<span class="string">"scene"</span>, get_scene, <span class="literal">null</span>);</span><br><span class="line">    L.RegVar(<span class="string">"gameObject"</span>, get_gameObject, <span class="literal">null</span>);</span><br><span class="line">    L.EndClass();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这部分代码由GenRegisterFunction()生成，可以看到，这些代码分为了4部分：<br>1.BeginClass部分，负责类在lua中的初始化部分<br>2.RegFunction部分，负责将函数注册到lua中<br>3.RegVar部分，负责将变量和属性注册到lua中<br>4.EndClass部分，负责类结束注册的收尾工作  </p>
+<h3 id="BeginClass部分"><a href="#BeginClass部分" class="headerlink" title="BeginClass部分"></a>BeginClass部分</h3><p>①用于创建类和类的元表,如果类的元表的元表（类的元表是承载每个类方法和属性的实体，类的元表的元表就是类的父类）<br>②将类添加到loaded表中。<br>③设置每个类的元表的通用的元方法和属性，<strong>gc,name,ref,</strong>cal,<strong>index,</strong>newindex。  </p>
+<h3 id="RegFunction部分"><a href="#RegFunction部分" class="headerlink" title="RegFunction部分"></a>RegFunction部分</h3><p>每一个RefFunction做的事都很简单，将每个函数转化为一个指针，然后添加到类的元表中去，与将一个c函数注册到lua中是一样的。  </p>
+<h3 id="RegVar部分"><a href="#RegVar部分" class="headerlink" title="RegVar部分"></a>RegVar部分</h3><p>每一个变量或属性或被包装成get_xxx,set_xxx函数注册添加到类的元表的gettag，settag表中去，用于调用和获取。  </p>
+<h3 id="EndClass部分"><a href="#EndClass部分" class="headerlink" title="EndClass部分"></a>EndClass部分</h3><p>做了两件事：<br>①设置类的元表<br>②把该类加到所在模块代表的表中（如将GameObject加入到UnityEngine表中）  </p>
+<h2 id="每个函数的实体部分"><a href="#每个函数的实体部分" class="headerlink" title="每个函数的实体部分"></a>每个函数的实体部分</h2><p>由于构造函数，this[]，get_xxx，set_xxx的原理都差不多，都是通过反射的信息生成的，所以放在一起用一个实例讲一下（使用GameObject的GetComponent函数进行说明）。<br><figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))</span>]</span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">GetComponent</span>(<span class="params">IntPtr L</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">try</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//获取栈中参数的个数</span></span><br><span class="line">        <span class="keyword">int</span> count = LuaDLL.lua_gettop(L);</span><br><span class="line">        <span class="comment">//根据栈中元素的个数和元素的类型判断该使用那一个重载</span></span><br><span class="line">        <span class="keyword">if</span> (count == <span class="number">2</span> &amp;&amp; TypeChecker.CheckTypes&lt;<span class="keyword">string</span>&gt;(L, <span class="number">2</span>))</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//将栈底的元素取出来，这个obj在栈中是一个fulluserdata，需要先将这个fulluserdata转化成对应的c#实例，也就是调用这个GetComponent函数的GameObject实例</span></span><br><span class="line">            UnityEngine.GameObject obj = (UnityEngine.GameObject)ToLua.CheckObject(L, <span class="number">1</span>, <span class="keyword">typeof</span>(UnityEngine.GameObject));</span><br><span class="line">            <span class="comment">//将栈底的上一个元素取出来，也就是GetComponent(string type)的参数</span></span><br><span class="line">            <span class="keyword">string</span> arg0 = ToLua.ToString(L, <span class="number">2</span>);</span><br><span class="line">            <span class="comment">//通过obj，arg0直接第调用GetCompent(string type)函数</span></span><br><span class="line">            UnityEngine.Component o = obj.GetComponent(arg0);</span><br><span class="line">            <span class="comment">//将调用结果压栈</span></span><br><span class="line">            ToLua.Push(L, o);</span><br><span class="line">            <span class="comment">//返回参数的个数</span></span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//另一个GetComponent的重载，跟上一个差不多，就不详细说明了</span></span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (count == <span class="number">2</span> &amp;&amp; TypeChecker.CheckTypes&lt;System.Type&gt;(L, <span class="number">2</span>))</span><br><span class="line">        &#123;</span><br><span class="line">            UnityEngine.GameObject obj = (UnityEngine.GameObject)ToLua.CheckObject(L, <span class="number">1</span>, <span class="keyword">typeof</span>(UnityEngine.GameObject));</span><br><span class="line">            System.Type arg0 = (System.Type)ToLua.ToObject(L, <span class="number">2</span>);</span><br><span class="line">            UnityEngine.Component o = obj.GetComponent(arg0);</span><br><span class="line">            ToLua.Push(L, o);</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//参数数量或类型不对，没有找到对应的重载，抛出错误</span></span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> LuaDLL.luaL_throw(L, <span class="string">"invalid arguments to method: UnityEngine.GameObject.GetComponent"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">catch</span> (Exception e)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> LuaDLL.toluaL_exception(L, e);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，GetComponent函数的内容，其实就是通过反射分析GetComponent的重载个数，每个重载的参数个数，类型生成的。具体内容和lua调用c函数差不多。 </p>
+<h2 id="每个函数实际的调用过程"><a href="#每个函数实际的调用过程" class="headerlink" title="每个函数实际的调用过程"></a>每个函数实际的调用过程</h2><p><strong>假如说在lua中有这么一个调用：</strong><br><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> tempGameObject = UnityEngine.GameObject(<span class="string">"temp"</span>)</span><br><span class="line"><span class="keyword">local</span> transform = tempGameObject.GetComponent(<span class="string">"Transform"</span>)</span><br></pre></td></tr></table></figure></p>
+<p><strong>第二行代码对应的实际调用过程是：</strong><br>1.先去tempGameObject的元表GameObject元表中尝试去取GetComponent函数，取到了。<br>2.调用取到的GetComponent函数，调用时会将tempGameObject,”Transform”作为参数先压栈，然后调用GetComponent函数。<br>3.接下来就进入GetComponent函数内部进行操作，因为生成了新的ci，所以此时栈中只有tempGameOjbect,”Transfrom”两个元素。<br>4.根据参数的数量和类型判断需要使用的重载。<br>5.通过tempGameObject代表的c#实例的索引，在objects表中找到对应的实例。同时取出”Transform”这个参数，准备进行真正的函数调用。<br>6.执行obj.GetComponent(arg0)，将结果包装成一个fulluserdata后压栈，结束调用。<br>7.lua中的transfrom变量赋值为这个压栈的fulluserdata。<br>8.结束。<br>其中3-7的操作都在c#中进行，也就是wrap文件中的GetComponent函数。 </p>
+<h1 id="一个类通过wrap文件注册进lua虚拟机后是什么样子的"><a href="#一个类通过wrap文件注册进lua虚拟机后是什么样子的" class="headerlink" title="一个类通过wrap文件注册进lua虚拟机后是什么样子的"></a>一个类通过wrap文件注册进lua虚拟机后是什么样子的</h1><p>使用GameObjectWrap进行举例<br><img src="/2018/09/19/tolua之wrap文件的原理与使用/GameObjectClass.svg" alt=""><br>可以看到GameObject的所有功能都是通过一个元表实现的，通过这个元表可以调用GameObjectWrap文件中的各个函数来实现对GameObject实例的操作，这个元表对使用者来说是不可见的，因为我们平时只会在代码中调用GameObject类，GameObject实例，并不会直接引用到这个元表,接下来来分析一下GameObject类，GameObject实例与这个元表的关系：<br>①GameObject类：其实只是一个放在_G表中供人调用的一个充当索引的表，我们通过它来触发GameObject元表的各种元方法，实现对c#类的使用。<br>②GameObject的实例：是一个fulluserdata,内容为一个整数，这个整数代表了这个实例在objects表中的索引（objects是一个用list实现的回收链表，lua中调用的c#类实例都存在这个里面，后面会讲这个objects表），每次在lua中调用一个c#实例的方法时，都会通过这个索引找到这个索引在c#中对应的实例，然后进行操作，最后将操作结果转化为一个fulluserdata（或lua的内建类型，如bool等）压栈，结束调用。  </p>
+<h1 id="在lua中调用一个c-实例中的函数或变量的过程"><a href="#在lua中调用一个c-实例中的函数或变量的过程" class="headerlink" title="在lua中调用一个c#实例中的函数或变量的过程"></a>在lua中调用一个c#实例中的函数或变量的过程</h1><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> tempGameObject = UnityEngine.GameObject(<span class="string">"temp"</span>)</span><br><span class="line"><span class="keyword">local</span> instanceID = tempGameObject.GetInstanceID()</span><br></pre></td></tr></table></figure>
+<p><img src="/2018/09/19/tolua之wrap文件的原理与使用/GameObjectDamo.svg" alt=""><br>在了解了GameObject元表后，这些只是一些基础的元表操作，就不多做解释。  </p>
+<h1 id="lua中c-实例的真正存储位置"><a href="#lua中c-实例的真正存储位置" class="headerlink" title="lua中c#实例的真正存储位置"></a>lua中c#实例的真正存储位置</h1><p>前面说了每一个c#实例在lua中是一个内容为整数索引的fulluserdata，在进行函数调用时，通过这个整数索引查找和调用这个索引代表的实例的函数和变量。<br>生成或使用一个代表c#实例的lua变量的过程大概是这样的。<br>还用这个例子来说明：<br><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> tempGameObject = UnityEngine.GameObject(<span class="string">"temp"</span>)</span><br><span class="line"><span class="keyword">local</span> transform = tempGameObject.GetComponent(<span class="string">"Transform"</span>)</span><br></pre></td></tr></table></figure></p>
+<p><img src="/2018/09/19/tolua之wrap文件的原理与使用/ObjectsDamo.svg" alt=""><br>所以说lua中调用和创建的c#实例实际都是存在c#中的objects表中，lua中的变量只是一个持有该c#实例索引位置的fulluserdata，并没有直接对c#实例进行引用。<br>对c#实例进行函数的调用和变量的修改都是通过元表调用操作wrap文件中的函数进行的。</p>
+<p>以上就是c#类如何通过wrap类在lua中进行使用的原理。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/lua/" rel="tag"># lua</a>
+          
+            <a href="/tags/tolua/" rel="tag"># tolua</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/04/通过lua栈了解lua与c的交互/" rel="next" title="通过lua栈了解lua与c的交互">
+                <i class="fa fa-chevron-left"></i> 通过lua栈了解lua与c的交互
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="blueberryzzz" />
+          <p class="site-author-name" itemprop="name">blueberryzzz</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#什么是wrap文件"><span class="nav-number">1.</span> <span class="nav-text">什么是wrap文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#wrap类文件生成和使用的总体流程"><span class="nav-number">2.</span> <span class="nav-text">wrap类文件生成和使用的总体流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#生成一个wrap文件的流程"><span class="nav-number">3.</span> <span class="nav-text">生成一个wrap文件的流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#wrap文件内容解析"><span class="nav-number">4.</span> <span class="nav-text">wrap文件内容解析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#注册部分"><span class="nav-number">4.1.</span> <span class="nav-text">注册部分</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#BeginClass部分"><span class="nav-number">4.1.1.</span> <span class="nav-text">BeginClass部分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RegFunction部分"><span class="nav-number">4.1.2.</span> <span class="nav-text">RegFunction部分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RegVar部分"><span class="nav-number">4.1.3.</span> <span class="nav-text">RegVar部分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EndClass部分"><span class="nav-number">4.1.4.</span> <span class="nav-text">EndClass部分</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#每个函数的实体部分"><span class="nav-number">4.2.</span> <span class="nav-text">每个函数的实体部分</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#每个函数实际的调用过程"><span class="nav-number">4.3.</span> <span class="nav-text">每个函数实际的调用过程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一个类通过wrap文件注册进lua虚拟机后是什么样子的"><span class="nav-number">5.</span> <span class="nav-text">一个类通过wrap文件注册进lua虚拟机后是什么样子的</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#在lua中调用一个c-实例中的函数或变量的过程"><span class="nav-number">6.</span> <span class="nav-text">在lua中调用一个c#实例中的函数或变量的过程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lua中c-实例的真正存储位置"><span class="nav-number">7.</span> <span class="nav-text">lua中c#实例的真正存储位置</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">blueberryzzz</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Gemini
+  </a>
+</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
