@@ -113,7 +113,7 @@
 <meta property="og:image" content="http://yoursite.com/2018/10/26/ChunkDisappearImage/formula2.png">
 <meta property="og:image" content="http://yoursite.com/2018/10/26/ChunkDisappearImage/formula3.png">
 <meta property="og:image" content="http://yoursite.com/2018/10/26/ChunkDisappearImage/DownloadShader.png">
-<meta property="og:updated_time" content="2018-10-26T13:28:38.914Z">
+<meta property="og:updated_time" content="2018-10-26T13:46:24.396Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ChunkDisappearImage">
 <meta name="twitter:description" content="ChunkDisappearImage一个以矩形为单位的图片消失分解效果的实现">
@@ -364,8 +364,6 @@
 <h4 id="顶点的移动公式："><a href="#顶点的移动公式：" class="headerlink" title="顶点的移动公式："></a>顶点的移动公式：</h4><figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//计算该方块到目标点的距离，以此为标准作为每个方块移动时间的延迟</span></span><br><span class="line"><span class="type">float</span> <span class="built_in">distance</span> = <span class="built_in">length</span>(target.xyz - leftBottom.xyz);</span><br><span class="line"><span class="comment">//距离越远的方块是否运行越快，_SpeedArg为1时，所有方块运行速度大致相同，值越小，距离越远的方块运行的越快</span></span><br><span class="line"><span class="type">float</span> tempDis = <span class="number">1</span> + <span class="built_in">distance</span> * _SpeedArg;</span><br><span class="line"><span class="type">float</span> f = <span class="built_in">clamp</span>((_Delta - <span class="built_in">distance</span> * _Interval) / tempDis, <span class="number">0</span>, <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
 <p>根据f在0-1之间的变化，来控制方块在起点到终点之间的移动和alpha值的变化。<br>①distance * _Interval保证每个距终点距离不同方块之间的开始移动时间会有一个间隔。<br>②tempDis可以控制不同距离方块之间的速度比。  </p>
 <h1 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h1><p>原理其实并不难，主要只有两部分：改mesh，改shader。就是一些坐标的转换、开始结束时间的控制、版本的兼容性比较麻烦。<br>在把整个流程跑通一次之后，就会对流程有一个较为全面的认识，下次做2D或是3D的一些效果思路也也会更广一些。  </p>
-<p>有什么讲的不对或者代码有bug的地方欢迎各位留言指正，我会尽快改正。  </p>
-<p>代码链接：<a href="https://github.com/blueberryzzz/UIAndShader/tree/master/UIAndShader/Assets/ChunkDisappearImage" target="_blank" rel="noopener">https://github.com/blueberryzzz/UIAndShader/tree/master/UIAndShader/Assets/ChunkDisappearImage</a></p>
 
       
     </div>
@@ -405,6 +403,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/11/04/UGUI之ScrollView的使用/" rel="prev" title="UGUI之ScrollView的使用">
+                UGUI之ScrollView的使用 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -481,7 +483,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-count">12</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
