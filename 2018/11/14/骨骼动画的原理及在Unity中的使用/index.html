@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Unity,openGL," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="制作骨骼动画我们看看这几步操作后，我们得到了那些数据：1.每个皮肤顶点的初始世界坐标。2.每个骨骼关节顶点的初始世界坐标。3.每个顶点被骨骼顶点的影响信息。4.骨骼如何移动。">
+<meta name="keywords" content="Unity,openGL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="骨骼动画的原理及在Unity中的使用">
+<meta property="og:url" content="http://yoursite.com/2018/11/14/骨骼动画的原理及在Unity中的使用/index.html">
+<meta property="og:site_name" content="It&#39;s empty">
+<meta property="og:description" content="制作骨骼动画我们看看这几步操作后，我们得到了那些数据：1.每个皮肤顶点的初始世界坐标。2.每个骨骼关节顶点的初始世界坐标。3.每个顶点被骨骼顶点的影响信息。4.骨骼如何移动。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2018/11/14/骨骼动画的原理及在Unity中的使用/CreateModel.png">
+<meta property="og:image" content="http://yoursite.com/2018/11/14/骨骼动画的原理及在Unity中的使用/Skeleton1.png">
+<meta property="og:image" content="http://yoursite.com/2018/11/14/骨骼动画的原理及在Unity中的使用/Skeleton2.png">
+<meta property="og:image" content="http://yoursite.com/2018/11/14/骨骼动画的原理及在Unity中的使用/Download1.png">
+<meta property="og:image" content="http://yoursite.com/2018/11/14/骨骼动画的原理及在Unity中的使用/Download2.png">
+<meta property="og:image" content="http://yoursite.com/2018/11/14/骨骼动画的原理及在Unity中的使用/Import.png">
+<meta property="og:image" content="http://yoursite.com/2018/11/14/骨骼动画的原理及在Unity中的使用/IntoScene.png">
+<meta property="og:image" content="http://yoursite.com/2018/11/14/骨骼动画的原理及在Unity中的使用/AnimationClipInfo.png">
+<meta property="og:image" content="http://yoursite.com/2018/11/14/骨骼动画的原理及在Unity中的使用/ModelData.png">
+<meta property="og:updated_time" content="2018-11-14T11:48:07.885Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="骨骼动画的原理及在Unity中的使用">
+<meta name="twitter:description" content="制作骨骼动画我们看看这几步操作后，我们得到了那些数据：1.每个皮肤顶点的初始世界坐标。2.每个骨骼关节顶点的初始世界坐标。3.每个顶点被骨骼顶点的影响信息。4.骨骼如何移动。">
+<meta name="twitter:image" content="http://yoursite.com/2018/11/14/骨骼动画的原理及在Unity中的使用/CreateModel.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/11/14/骨骼动画的原理及在Unity中的使用/"/>
+
+
+
+
+
+  <title>骨骼动画的原理及在Unity中的使用 | It's empty</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">It's empty</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/14/骨骼动画的原理及在Unity中的使用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="blueberryzzz">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="It's empty">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">骨骼动画的原理及在Unity中的使用</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-14T19:46:45+08:00">
+                2018-11-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="制作骨骼动画"><a href="#制作骨骼动画" class="headerlink" title="制作骨骼动画"></a>制作骨骼动画</h1><p><img src="/2018/11/14/骨骼动画的原理及在Unity中的使用/CreateModel.png" alt=""><br>我们看看这几步操作后，我们得到了那些数据：<br>1.每个皮肤顶点的初始世界坐标。<br>2.每个骨骼关节顶点的初始世界坐标。<br>3.每个顶点被骨骼顶点的影响信息。<br>4.骨骼如何移动。<br><a id="more"></a>   </p>
+<h1 id="骨骼动画原理"><a href="#骨骼动画原理" class="headerlink" title="骨骼动画原理"></a>骨骼动画原理</h1><p><strong>核心:</strong> 通过骨骼带动皮肤运动，也就是通过骨骼的移动动态计算mesh上的点的位置</p>
+<h4 id="过程："><a href="#过程：" class="headerlink" title="过程："></a>过程：</h4><p>1.将mesh上的点转换为骨骼空间上的点。<br>骨骼空间就是以关节为原点确定的空间，并不是一个实体。<br>2.通过缩放、旋转、平移将骨骼移动到新的位置。<br>3.根据骨骼的新位置计算mesh顶点新世界坐标（骨骼移动，但mesh顶点与骨骼的相对位置不变，所以产生了顶点随骨骼移动的感觉），若一个顶点被多个骨骼影响，则要进行顶点混合计算新世界坐标。 </p>
+<h4 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h4><p>初始位置(绑定姿势)：<br><img src="/2018/11/14/骨骼动画的原理及在Unity中的使用/Skeleton1.png" alt=""><br>骨骼移动后的位置：<br><img src="/2018/11/14/骨骼动画的原理及在Unity中的使用/Skeleton2.png" alt=""><br><strong>1.计算小臂上一点S在小臂空间中的位置。</strong><br>这个就要根据初始的骨骼位置和mesh上顶点的位置来计算了，也就是常说的绑定姿势状态。<br>先说一下该例中每个坐标的意义：<br>(x1,y1,z1):左肩关节SL的<font color="red">世界</font>坐标。<br>(x2,y2,z2):左肘关节在以左肩关节为原点的坐标系<font color="red">本地</font>坐标。<br>(x3,y3,z3):附着于左小臂上的皮肤上的一点S的<font color="red">世界</font>坐标。<br>这里为了简单，假设所有的关节都没有经过旋转和缩放。<br>先将S转换到通过SL确定的空间中，也就是大臂UAL空间，直接减去SL的坐标即可(x3-x1,y3-y1,z3-z1)。<br>再将S点在大臂UAL空间中的坐标转换到小臂LA空间中，直接减去EL的坐标即可(x3-x1-x2,y3-y1-y2,z3-z1-z2)。 </p>
+<p>以上只是一个简单的说明，而实际的使用中，初始的骨骼位置可能是通过缩放、旋转、平移后得到的，一般会通过矩阵的方式来表示这一系列变换。<br>关于OpenGL中的坐标转换可以参考这个链接的说明<a href="https://learnopengl-cn.github.io/01%20Getting%20started/07%20Transformations/" target="_blank" rel="noopener">LearnOpenGL CN</a>。<br>看完这个我们就应该知道如何将一个子坐标空间的点转化为世界坐标了。下面再使用该例子进行举例。<br>先计算模型矩阵再求模型矩阵的逆矩阵：<br>$$M_{EL→SL} = M_{EL_{translation}}⋅M_{EL_{rotation}}⋅M_{EL_{scale}}$$<br>$$M_{SL→World} = M_{SL_{translation}}⋅M_{SL_{rotation}}⋅M_{SL_{scale}}$$<br>$$M_{EL→World} = M_{SL→World}⋅M_{EL→SL}$$<br>$$M_{World→EL} = Inverse(M_{EL→World})$$<br>或者直接将求模型矩阵的运算反过来也可以：<br>$$M_{SL→EL} = Inverse(M_{EL_{scale}})⋅Inverse(M_{EL_{rotation}})⋅Inverse(M_{EL_{translation}})$$<br>$$M_{World→SL} = Inverse(M_{SL_{scale}})⋅Inverse(M_{SL_{rotation}})⋅Inverse(M_{SL_{translation}})$$<br>$$M_{World→EL} = M_{SL→EL}⋅M_{World→SL}$$<br>得到World→EL矩阵后就可应直接通过矩阵运算直接将世界坐标上的一点转化为EL空间上的一点了。<br>$$V_{local} = M_{World→EL}⋅V_{world}$$<br><strong>注意：</strong></p>
+<p><font color="red">1.注意矩阵的运算顺序，因为矩阵运算是不满足交换率的，如果顺序错了，结果很可能也就错了。</font><br>2.矩阵EL→World一般叫做EL空间的模型(model)矩阵，矩阵World→EL一般叫做EL空间的绑定姿势矩阵(bindpose)<br>3.有时存储的Mesh顶点信息不是直接的世界坐标，而是一个有层次结构的mesh，但这并不影响流程，只要在运算时增加一步将这些顶点转化为世界坐标的操作即可。<br><strong>2.计算EL顺时针旋转90°后S点的位置。</strong><br>直接通过左肩SL，左肘关节EL的缩放、旋转、平移信息计算小臂LA空间的模型矩阵，使用上一步算出的小臂LA空间坐标乘以该模型矩阵即算出了该点收到骨骼移动的影响后的位置。<br>$$M’<em>{EL→SL} = M</em>{EL_{scale}}⋅M’<em>{EL</em>{rotation}}⋅M_{EL_{translation}}$$<br>$$M_{SL→World} = M_{SL_{scale}}⋅M_{SL_{rotation}}⋅M_{SL_{translation}}$$<br>$$M’<em>{EL→World} = M</em>{SL→World}⋅M’<em>{EL→SL}$$<br>$$V’</em>{world} = M’<em>{EL→World}⋅V</em>{local}$$<br><strong>3.顶点混合</strong><br>有一些顶点不一定只受一个骨骼的影响，可能受多个骨骼的影响，此时就要通过顶点混合计算该点的新坐标。<br>现在假设点S同时受SL,EL的影响且影响权重分别为0.4，0.6。<br>①分别计算点S在SL、EL空间中的本地坐标。<br>$$V_{SL_{local}} = M_{Wrold→SL}⋅V_{world}$$<br>$$V_{EL_{local}} = M_{Wrold→EL}⋅V_{world}$$<br>②分别计算点S在SL、EL移动后的世界坐标。<br>$$V_{SL_{world}} = M_{SL→World}⋅V_{SL_{local}}$$<br>$$V_{EL_{world}} = M_{EL→World}⋅V_{EL_{local}}$$<br>③根据SL、EL对点S的影响权重混合坐标，获得新的世界坐标。<br>$$V’<em>{world} = 0.4⋅V</em>{SL_{world}}+0.6⋅V_{EL_{world}}$$<br>这里举例的是受两个骨骼影响的情况，受3个、4个时原理也是相同的，只不过运算量会更大一些。  </p>
+<h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><p>1.空间的平移、旋转、缩放都可以用矩阵来表示，而且这些矩阵也可以结合在一起成为一个矩阵，多层空间结构的变换也一样可以组合为一个矩阵。<br>2.现在看来骨骼动画的核心其实就是几个矩阵乘法的问题，大概就是这样：<br>$$V’<em>{world} = M</em>{model}⋅M_{bindpose}⋅V_{world}$$<br>其中model矩阵随着动画的播放不停的变化，也就实现了骨骼带动皮肤的功能。<br>假设一个顶点受多个骨骼影响，那么就再根据权重混合一下。<br>3.mesh的初始位置、bindpose、影响因素都是通过制作该骨骼动画模型时确定的，可以参考第一小节制作骨骼动画的过程。  </p>
+<h1 id="Unity中的骨骼动画"><a href="#Unity中的骨骼动画" class="headerlink" title="Unity中的骨骼动画"></a>Unity中的骨骼动画</h1><p>我们这里以一个Mixamo上的免费资源<a href="https://www.mixamo.com/#/" target="_blank" rel="noopener">Samba Dancing</a>为例。  </p>
+<h4 id="资源下载"><a href="#资源下载" class="headerlink" title="资源下载"></a>资源下载</h4><p><img src="/2018/11/14/骨骼动画的原理及在Unity中的使用/Download1.png" alt=""><br><img src="/2018/11/14/骨骼动画的原理及在Unity中的使用/Download2.png" alt="">  </p>
+<h4 id="资源导入"><a href="#资源导入" class="headerlink" title="资源导入"></a>资源导入</h4><p>直接将资源拖入Unity中即可，可以看到在Unity中生成了一个文件夹和一个预制件。<br><img src="/2018/11/14/骨骼动画的原理及在Unity中的使用/Import.png" alt="">  </p>
+<h4 id="加入动画"><a href="#加入动画" class="headerlink" title="加入动画"></a>加入动画</h4><p>1.把模型prefab拖入场景中。<br>2.然后将mixamo.com动画拖到场景中的Samba Dancing中，Unity会自动生成对应的Animator Controller。<br><img src="/2018/11/14/骨骼动画的原理及在Unity中的使用/IntoScene.png" alt="">  </p>
+<h4 id="运行场景，查看动画效果"><a href="#运行场景，查看动画效果" class="headerlink" title="运行场景，查看动画效果"></a>运行场景，查看动画效果</h4><p>直接点击运行即可。  </p>
+<h4 id="数据说明"><a href="#数据说明" class="headerlink" title="数据说明"></a>数据说明</h4><h5 id="动画数据说明"><a href="#动画数据说明" class="headerlink" title="动画数据说明:"></a>动画数据说明:</h5><p><img src="/2018/11/14/骨骼动画的原理及在Unity中的使用/AnimationClipInfo.png" alt=""><br>左边是每一帧变化的骨骼，右边是每个骨骼关键帧的平移，旋转，缩放信息。  </p>
+<h5 id="模型信息说明"><a href="#模型信息说明" class="headerlink" title="模型信息说明"></a>模型信息说明</h5><p><img src="/2018/11/14/骨骼动画的原理及在Unity中的使用/ModelData.png" alt="">  </p>
+<h5 id="Skinned-Mesh-Renderer属性详解"><a href="#Skinned-Mesh-Renderer属性详解" class="headerlink" title="Skinned Mesh Renderer属性详解"></a>Skinned Mesh Renderer属性详解</h5><p>Cast Shadows：是否投射阴影。<br>Receive Shadows：是否接收阴影。<br>Materials：材质。<br>Use Light Probes：是否使用光探针。<br>Reflection Probes：反射探针设置。<br>Anchor Override：网格锚点。<br>Lightmap Parameters：光照烘培参数。<br>Quality：每个顶点最多收到的骨骼影响数量。<br>Update When Offscreen：当mesh在屏幕外时是否更新，依据RootBone和Bounds判断。<br><strong>Mesh：Mesh信息。</strong><br>mesh信息包含了每个顶点的位置信息，受骨骼影响的权重信息、切线、法线、UV映射信息。<br><strong>RootBone：根骨骼，有两个作用。</strong><br>1.作为mesh在屏幕外时是否更新的依据。<br>2.进行坐标计算时的Root空间。<br>在Unity中计算mesh上一点位置的流程大概是这样的：<br>$$V_{RootBone_{local}} = M_{World→RootBone}⋅M’<em>{Bone→World}⋅M</em>{Bindpose}⋅V_{world}$$<br>先通过上述一系列计算得到点在RootBone空间中的位置，上述过程对开发者时不可见的。然后将接下来的步骤交给Material中的Shader解决。查看Shader文件可以看到，在顶点着色其中第一步会给输入的点乘以一个MVP矩阵获取该点在屏幕上的位置，其中的M就是RootBone的模型矩阵。<br>以Unity 5.37的Standard Shader为例，截取其使用的顶点着色器的一部分<br><figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">VertexOutputForwardBase vertForwardBase (VertexInput v)</span><br><span class="line">&#123;</span><br><span class="line">    UNITY_SETUP_INSTANCE_ID(v);</span><br><span class="line">    VertexOutputForwardBase o;</span><br><span class="line">    UNITY_INITIALIZE_OUTPUT(VertexOutputForwardBase, o);</span><br><span class="line">    UNITY_TRANSFER_INSTANCE_ID(v, o);</span><br><span class="line">    UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);</span><br><span class="line"></span><br><span class="line">    float4 posWorld = mul(unity_ObjectToWorld, v.vertex);</span><br><span class="line">    <span class="meta">#if UNITY_REQUIRE_FRAG_WORLDPOS</span></span><br><span class="line">        <span class="meta">#if UNITY_PACK_WORLDPOS_WITH_TANGENT</span></span><br><span class="line">            o.tangentToWorldAndPackedData[<span class="number">0</span>].w = posWorld.x;</span><br><span class="line">            o.tangentToWorldAndPackedData[<span class="number">1</span>].w = posWorld.y;</span><br><span class="line">            o.tangentToWorldAndPackedData[<span class="number">2</span>].w = posWorld.z;</span><br><span class="line">        <span class="meta">#else</span></span><br><span class="line">            o.posWorld = posWorld.xyz;</span><br><span class="line">        <span class="meta">#endif</span></span><br><span class="line">    <span class="meta">#endif</span></span><br></pre></td></tr></table></figure></p>
+<p>可以看到，通过posWorld = mul(unity_ObjectToWorld, v.vertex);对顶点以RootBone空间为基础做了转换。   </p>
+<p>Bounds：根骨骼的边界。  </p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Unity/" rel="tag"># Unity</a>
+          
+            <a href="/tags/openGL/" rel="tag"># openGL</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/11/04/UGUI之ScrollView的使用/" rel="next" title="UGUI之ScrollView的使用">
+                <i class="fa fa-chevron-left"></i> UGUI之ScrollView的使用
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="blueberryzzz" />
+          <p class="site-author-name" itemprop="name">blueberryzzz</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#制作骨骼动画"><span class="nav-number">1.</span> <span class="nav-text">制作骨骼动画</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#骨骼动画原理"><span class="nav-number">2.</span> <span class="nav-text">骨骼动画原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#过程："><span class="nav-number">2.0.0.1.</span> <span class="nav-text">过程：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#举例"><span class="nav-number">2.0.0.2.</span> <span class="nav-text">举例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#小结"><span class="nav-number">2.0.0.3.</span> <span class="nav-text">小结</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Unity中的骨骼动画"><span class="nav-number">3.</span> <span class="nav-text">Unity中的骨骼动画</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#资源下载"><span class="nav-number">3.0.0.1.</span> <span class="nav-text">资源下载</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#资源导入"><span class="nav-number">3.0.0.2.</span> <span class="nav-text">资源导入</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#加入动画"><span class="nav-number">3.0.0.3.</span> <span class="nav-text">加入动画</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#运行场景，查看动画效果"><span class="nav-number">3.0.0.4.</span> <span class="nav-text">运行场景，查看动画效果</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据说明"><span class="nav-number">3.0.0.5.</span> <span class="nav-text">数据说明</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#动画数据说明"><span class="nav-number">3.0.0.5.1.</span> <span class="nav-text">动画数据说明:</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#模型信息说明"><span class="nav-number">3.0.0.5.2.</span> <span class="nav-text">模型信息说明</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Skinned-Mesh-Renderer属性详解"><span class="nav-number">3.0.0.5.3.</span> <span class="nav-text">Skinned Mesh Renderer属性详解</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">blueberryzzz</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Gemini
+  </a>
+</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
