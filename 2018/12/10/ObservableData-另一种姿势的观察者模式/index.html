@@ -78,7 +78,7 @@
 <link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Unity,UGUI," />
+  <meta name="keywords" content="Unity,c#," />
 
 
 
@@ -94,27 +94,18 @@
 
 
 
-<meta name="description" content="CircleListCircleList是一个通过UGUI实现的圆形列表，通过缩放、平移和层级的改变模拟一个3D的圆形列表。">
-<meta name="keywords" content="Unity,UGUI">
+<meta name="description" content="使用数据的定义1234567891011public class TestModel&amp;#123;    private static TestModel mInstance;    public static TestModel GetInsatance()    &amp;#123;        if (mInstance == null) mInstance = new TestModel();">
+<meta name="keywords" content="Unity,c#">
 <meta property="og:type" content="article">
-<meta property="og:title" content="CircleList">
-<meta property="og:url" content="http://yoursite.com/2018/10/17/CircleList/index.html">
+<meta property="og:title" content="ObservableData-另一种姿势的观察者模式">
+<meta property="og:url" content="http://yoursite.com/2018/12/10/ObservableData-另一种姿势的观察者模式/index.html">
 <meta property="og:site_name" content="It&#39;s empty">
-<meta property="og:description" content="CircleListCircleList是一个通过UGUI实现的圆形列表，通过缩放、平移和层级的改变模拟一个3D的圆形列表。">
+<meta property="og:description" content="使用数据的定义1234567891011public class TestModel&amp;#123;    private static TestModel mInstance;    public static TestModel GetInsatance()    &amp;#123;        if (mInstance == null) mInstance = new TestModel();">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/2018/10/17/CircleList/illustrate1.gif">
-<meta property="og:image" content="http://yoursite.com/2018/10/17/CircleList/illustrate2.gif">
-<meta property="og:image" content="http://yoursite.com/2018/10/17/CircleList/illustrate3.gif">
-<meta property="og:image" content="http://yoursite.com/2018/10/17/CircleList/Theory3.png">
-<meta property="og:image" content="http://yoursite.com/2018/10/17/CircleList/Theory1.png">
-<meta property="og:image" content="http://yoursite.com/2018/10/17/CircleList/Scale1.png">
-<meta property="og:image" content="http://yoursite.com/2018/10/17/CircleList/Scale2.png">
-<meta property="og:image" content="http://yoursite.com/2018/10/17/CircleList/Theory2.png">
-<meta property="og:updated_time" content="2018-10-26T12:34:29.574Z">
+<meta property="og:updated_time" content="2018-12-09T17:38:56.127Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="CircleList">
-<meta name="twitter:description" content="CircleListCircleList是一个通过UGUI实现的圆形列表，通过缩放、平移和层级的改变模拟一个3D的圆形列表。">
-<meta name="twitter:image" content="http://yoursite.com/2018/10/17/CircleList/illustrate1.gif">
+<meta name="twitter:title" content="ObservableData-另一种姿势的观察者模式">
+<meta name="twitter:description" content="使用数据的定义1234567891011public class TestModel&amp;#123;    private static TestModel mInstance;    public static TestModel GetInsatance()    &amp;#123;        if (mInstance == null) mInstance = new TestModel();">
 
 
 
@@ -143,13 +134,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/10/17/CircleList/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/12/10/ObservableData-另一种姿势的观察者模式/"/>
 
 
 
 
 
-  <title>CircleList | It's empty</title>
+  <title>ObservableData-另一种姿势的观察者模式 | It's empty</title>
   
 
 
@@ -272,7 +263,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/17/CircleList/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/10/ObservableData-另一种姿势的观察者模式/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="blueberryzzz">
@@ -289,7 +280,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">CircleList</h1>
+          <h1 class="post-title" itemprop="name headline">ObservableData-另一种姿势的观察者模式</h1>
         
 
         <div class="post-meta">
@@ -301,8 +292,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-17T22:04:29+08:00">
-                2018-10-17
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-10T01:24:09+08:00">
+                2018-12-10
               </time>
             
 
@@ -344,12 +335,16 @@
       
 
       
-        <h1 id="CircleList"><a href="#CircleList" class="headerlink" title="CircleList"></a>CircleList</h1><p>CircleList是一个通过UGUI实现的圆形列表，通过缩放、平移和层级的改变模拟一个3D的圆形列表。<br><a id="more"></a></p>
-<h1 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h1><h2 id="添加与旋转"><a href="#添加与旋转" class="headerlink" title="添加与旋转"></a>添加与旋转</h2><p><img src="/2018/10/17/CircleList/illustrate1.gif" alt=""> </p>
-<h2 id="间距调整"><a href="#间距调整" class="headerlink" title="间距调整"></a>间距调整</h2><p><img src="/2018/10/17/CircleList/illustrate2.gif" alt=""> </p>
-<h2 id="椭圆形的旋转"><a href="#椭圆形的旋转" class="headerlink" title="椭圆形的旋转"></a>椭圆形的旋转</h2><p><img src="/2018/10/17/CircleList/illustrate3.gif" alt=""> </p>
-<h1 id="参数"><a href="#参数" class="headerlink" title="参数"></a>参数</h1><p><strong>CenterX:</strong> 椭圆圆心的x坐标偏移量<br><strong>CenterY:</strong> 椭圆圆心的y坐标偏移量<br><strong>RadiusX:</strong> 椭圆的长轴<br><strong>RadiusY:</strong> 椭圆的短轴<br><strong>MinScale:</strong> 缩放的最小值，缩放值在[0,π]间逐渐增大，在[π,2π]间逐渐减小<br><strong>MaxScale:</strong> 缩放的最大值<br><strong>Speed:</strong> 滑动距离对旋转速度的影响参数<br><strong>AdjustArg:</strong> 调整间距的参数，值越小前方的item布局越松散<br><strong>OriginalRotatin:</strong> 椭圆的初始旋转角度<br><strong>IsAutoMove:</strong> 是否自动转动  </p>
-<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p>&emsp;&emsp;以横向滑动的距离作为每个item旋转角度的增量来实现列表的转动，同时将角度控制在[0,2π]，方便进行其他的计算。<br>&emsp;&emsp;在将每次拖动的距离向item旋转角做变化时做了一些处理，先算出点击点向量AB的的垂直向量BF(x2,y2)，也就是半径为AB的圆的切线。将BF标准化后得到向量B’F’(x2’,y2’)，让后计算GB、B’F’的点积，用结果乘上速度参数作角度的增量，实现滑动的效果。<br><img src="/2018/10/17/CircleList/Theory3.png" alt=""><br>&emsp;&emsp;根据item的个数，计算出每个item间的间隔，以此为依据进行布局。(总旋转角+item在队列中的位置*item间的间隔)作为每个item的最终旋转角。<br><img src="/2018/10/17/CircleList/Theory1.png" alt=""><br>&emsp;&emsp;以角度的值为缩放的依据，让item在[0,π]之间逐渐增大，在[π,2π]之间逐渐减小。模拟出近大远小的感觉,同时以item的缩放来重新设置item的层级，解决item的遮挡关系（层级的排序通过一个辅助列表实现）。<br>&emsp;&emsp;但是让每个item之间相隔的角度相等的话，就会显得前方的item比较拥挤，所以通过每个item的缩放值进行角度的二次调整，让列表显得不是那么拥挤。<br><img src="/2018/10/17/CircleList/Scale1.png" alt=""><br><img src="/2018/10/17/CircleList/Scale2.png" alt=""><br>&emsp;&emsp;在计算出每个item的位置后，将item的位置以圆心为原点，旋转θ度，实现椭圆的旋转。<br><img src="/2018/10/17/CircleList/Theory2.png" alt=""><br><br><br>代码链接：<a href="https://github.com/blueberryzzz/UIAndShader/tree/master/UIAndShader/Assets/CircleList" target="_blank" rel="noopener">https://github.com/blueberryzzz/UIAndShader/tree/master/UIAndShader/Assets/CircleList</a></p>
+        <h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><h2 id="数据的定义"><a href="#数据的定义" class="headerlink" title="数据的定义"></a>数据的定义</h2><figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">TestModel</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> TestModel mInstance;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> TestModel <span class="title">GetInsatance</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mInstance == <span class="literal">null</span>) mInstance = <span class="keyword">new</span> TestModel();</span><br><span class="line">        <span class="keyword">return</span> mInstance;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">readonly</span> <span class="keyword">public</span> ObservableData&lt;<span class="keyword">int</span>&gt; num = <span class="keyword">new</span> ObservableData&lt;<span class="keyword">int</span>&gt;();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>直接定义在Model中即可，在定义时建议直接定义成readonly，防止出现ObservableData被重新赋值，因为监听都是绑定在ObservableData上的，ObservableData被重新赋值后之前的监听也会丢失。<br><a id="more"></a>   </p>
+<h2 id="数据的修改"><a href="#数据的修改" class="headerlink" title="数据的修改"></a>数据的修改</h2><figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">TestModel testModel = TestModel.GetInsatance();</span><br><span class="line">testModel.count.Set(<span class="number">11</span>);</span><br></pre></td></tr></table></figure>
+<p>对于ObservableData<t>，直接通过Set(T data),Get()函数进行数据的修改和获取，在修改的同时会发送修改事件出去。  </t></p>
+<h2 id="数据的监听与监听的移除"><a href="#数据的监听与监听的移除" class="headerlink" title="数据的监听与监听的移除"></a>数据的监听与监听的移除</h2><figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">TestObserver</span> : <span class="title">MonoBehaviour</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Awake</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        TestModel testModel = TestModel.GetInstance();</span><br><span class="line">        testModel.count.AddListener(TestListener,DataListenerType.UPDATE,<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">TestListener</span>(<span class="params"><span class="keyword">int</span> num</span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        Debug.Log(num);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnDestroy</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        testModel.count.RemoveListener(TestListener);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>监听</strong><br>直接向对应的ObservableData添加监听、监听类型、holder即可（holder代表这个监听被哪个实例持有，便于监听的移除）。<br>添加监听后，在修改ObservableData时，就会对对应类型的监听进行调用。<br><strong>移除监听</strong><br>通过监听的委托或holder移除一个监听或所有监听。  </p>
+<h1 id="核心思路"><a href="#核心思路" class="headerlink" title="核心思路"></a>核心思路</h1><p>1.使用泛型将类型封装，在修改数据的同时根据修改的类型通知事件出去。<br>2.使用番型将监听的回调封装，可以进行统一的监听和移除。<br>3.通过辅助绑定类等辅助类增加ObservableData的易用性。<br>4.在单数据的ObservableData还增加了List类型的Data，使用方法与单数据类似。  </p>
+<h1 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h1><p>为了提高ObservableData的易用性，添加了AssistantBinder、ObserverView。<br><strong>AssistantBinder:</strong> 辅助绑定类，作为一个额外的holder，可对数据和监听进行统一的管理。<br><strong>ObserverView:</strong> 继承自MonoBehaviour，在被销毁时自动对监听进行释放。  </p>
+<h1 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h1><p>整合和数据的存储和事件的通知，化简了观察者模式。<br>1.易于扩展：<br>添加新类型时只用添加新的ObservableData和DataListener即可。<br>2.易于修改：<br>比如在某些项目修改操作希望通知出不同的事件，可以直接修改对应的Set、Get函数。 </p>
+<p><strong>项目链接：</strong><a href="https://github.com/blueberryzzz/ObservableDataDemo" target="_blank" rel="noopener">ObservableDemo</a>  </p>
 
       
     </div>
@@ -369,7 +364,7 @@
           
             <a href="/tags/Unity/" rel="tag"># Unity</a>
           
-            <a href="/tags/UGUI/" rel="tag"># UGUI</a>
+            <a href="/tags/c/" rel="tag"># c#</a>
           
         </div>
       
@@ -382,8 +377,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/09/20/ubuntu16-04-1下安装mysql/" rel="next" title="ubuntu16.04.1下安装mysql">
-                <i class="fa fa-chevron-left"></i> ubuntu16.04.1下安装mysql
+              <a href="/2018/11/14/骨骼动画的原理及在Unity中的使用/" rel="next" title="骨骼动画的原理及在Unity中的使用">
+                <i class="fa fa-chevron-left"></i> 骨骼动画的原理及在Unity中的使用
               </a>
             
           </div>
@@ -391,10 +386,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/10/26/ChunkDisappearImage/" rel="prev" title="ChunkDisappearImage">
-                ChunkDisappearImage <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -519,7 +510,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#CircleList"><span class="nav-number">1.</span> <span class="nav-text">CircleList</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#效果"><span class="nav-number">2.</span> <span class="nav-text">效果</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#添加与旋转"><span class="nav-number">2.1.</span> <span class="nav-text">添加与旋转</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#间距调整"><span class="nav-number">2.2.</span> <span class="nav-text">间距调整</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#椭圆形的旋转"><span class="nav-number">2.3.</span> <span class="nav-text">椭圆形的旋转</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参数"><span class="nav-number">3.</span> <span class="nav-text">参数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#原理"><span class="nav-number">4.</span> <span class="nav-text">原理</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#使用"><span class="nav-number">1.</span> <span class="nav-text">使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#数据的定义"><span class="nav-number">1.1.</span> <span class="nav-text">数据的定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据的修改"><span class="nav-number">1.2.</span> <span class="nav-text">数据的修改</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据的监听与监听的移除"><span class="nav-number">1.3.</span> <span class="nav-text">数据的监听与监听的移除</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#核心思路"><span class="nav-number">2.</span> <span class="nav-text">核心思路</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#其他"><span class="nav-number">3.</span> <span class="nav-text">其他</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#小结"><span class="nav-number">4.</span> <span class="nav-text">小结</span></a></li></ol></div>
             
 
           </div>
