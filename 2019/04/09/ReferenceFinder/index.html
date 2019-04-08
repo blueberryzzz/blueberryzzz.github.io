@@ -78,7 +78,7 @@
 <link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Unity,c#," />
+  <meta name="keywords" content="unity," />
 
 
 
@@ -94,18 +94,22 @@
 
 
 
-<meta name="description" content="使用数据的定义1234567891011public class TestModel&amp;#123;    private static TestModel mInstance;    public static TestModel GetInsatance()    &amp;#123;        if (mInstance == null) mInstance = new TestModel();">
-<meta name="keywords" content="Unity,c#">
+<meta name="description" content="简介&amp;emsp;&amp;emsp;这是一个用来查找资源引用和依赖的插件，通过缓存来保存资源间的引用信息，通过树状结构直观的展示。&amp;emsp;&amp;emsp;由于是通过缓存进行实现的，所以在希望的到精确的引用信息时需要刷新缓存。不过由于缓存的存在，在资源改动较少的情况下，刷新速度较快，对使用影响较小。&amp;emsp;&amp;emsp;直接将文件夹拖到项目中即可使用。">
+<meta name="keywords" content="unity">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ObservableData-另一种姿势的观察者模式">
-<meta property="og:url" content="http://yoursite.com/2018/12/10/ObservableData-另一种姿势的观察者模式/index.html">
+<meta property="og:title" content="ReferenceFinder">
+<meta property="og:url" content="http://yoursite.com/2019/04/09/ReferenceFinder/index.html">
 <meta property="og:site_name" content="It&#39;s empty">
-<meta property="og:description" content="使用数据的定义1234567891011public class TestModel&amp;#123;    private static TestModel mInstance;    public static TestModel GetInsatance()    &amp;#123;        if (mInstance == null) mInstance = new TestModel();">
+<meta property="og:description" content="简介&amp;emsp;&amp;emsp;这是一个用来查找资源引用和依赖的插件，通过缓存来保存资源间的引用信息，通过树状结构直观的展示。&amp;emsp;&amp;emsp;由于是通过缓存进行实现的，所以在希望的到精确的引用信息时需要刷新缓存。不过由于缓存的存在，在资源改动较少的情况下，刷新速度较快，对使用影响较小。&amp;emsp;&amp;emsp;直接将文件夹拖到项目中即可使用。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-12-09T17:58:16.447Z">
+<meta property="og:image" content="http://yoursite.com/2019/04/09/ReferenceFinder/Start.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/09/ReferenceFinder/SingleSearch.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/09/ReferenceFinder/BatchSearch.png">
+<meta property="og:updated_time" content="2019-04-08T16:51:26.356Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ObservableData-另一种姿势的观察者模式">
-<meta name="twitter:description" content="使用数据的定义1234567891011public class TestModel&amp;#123;    private static TestModel mInstance;    public static TestModel GetInsatance()    &amp;#123;        if (mInstance == null) mInstance = new TestModel();">
+<meta name="twitter:title" content="ReferenceFinder">
+<meta name="twitter:description" content="简介&amp;emsp;&amp;emsp;这是一个用来查找资源引用和依赖的插件，通过缓存来保存资源间的引用信息，通过树状结构直观的展示。&amp;emsp;&amp;emsp;由于是通过缓存进行实现的，所以在希望的到精确的引用信息时需要刷新缓存。不过由于缓存的存在，在资源改动较少的情况下，刷新速度较快，对使用影响较小。&amp;emsp;&amp;emsp;直接将文件夹拖到项目中即可使用。">
+<meta name="twitter:image" content="http://yoursite.com/2019/04/09/ReferenceFinder/Start.png">
 
 
 
@@ -134,13 +138,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/12/10/ObservableData-另一种姿势的观察者模式/"/>
+  <link rel="canonical" href="http://yoursite.com/2019/04/09/ReferenceFinder/"/>
 
 
 
 
 
-  <title>ObservableData-另一种姿势的观察者模式 | It's empty</title>
+  <title>ReferenceFinder | It's empty</title>
   
 
 
@@ -263,7 +267,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/10/ObservableData-另一种姿势的观察者模式/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/09/ReferenceFinder/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="blueberryzzz">
@@ -280,7 +284,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">ObservableData-另一种姿势的观察者模式</h1>
+          <h1 class="post-title" itemprop="name headline">ReferenceFinder</h1>
         
 
         <div class="post-meta">
@@ -292,8 +296,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-10T01:24:09+08:00">
-                2018-12-10
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-09T00:44:38+08:00">
+                2019-04-09
               </time>
             
 
@@ -335,16 +339,13 @@
       
 
       
-        <h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><h2 id="数据的定义"><a href="#数据的定义" class="headerlink" title="数据的定义"></a>数据的定义</h2><figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">TestModel</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> TestModel mInstance;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> TestModel <span class="title">GetInsatance</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mInstance == <span class="literal">null</span>) mInstance = <span class="keyword">new</span> TestModel();</span><br><span class="line">        <span class="keyword">return</span> mInstance;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">readonly</span> <span class="keyword">public</span> ObservableData&lt;<span class="keyword">int</span>&gt; num = <span class="keyword">new</span> ObservableData&lt;<span class="keyword">int</span>&gt;();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>直接定义在Model中即可，在定义时建议直接定义成readonly，防止出现ObservableData被重新赋值，因为监听都是绑定在ObservableData上的，ObservableData被重新赋值后之前的监听也会丢失。<br><a id="more"></a>   </p>
-<h2 id="数据的修改"><a href="#数据的修改" class="headerlink" title="数据的修改"></a>数据的修改</h2><figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">TestModel testModel = TestModel.GetInsatance();</span><br><span class="line">testModel.count.Set(<span class="number">11</span>);</span><br></pre></td></tr></table></figure>
-<p>对于ObservableData<t>，直接通过Set(T data),Get()函数进行数据的修改和获取，在修改的同时会发送修改事件出去。  </t></p>
-<h2 id="数据的监听与监听的移除"><a href="#数据的监听与监听的移除" class="headerlink" title="数据的监听与监听的移除"></a>数据的监听与监听的移除</h2><figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">TestObserver</span> : <span class="title">MonoBehaviour</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Awake</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        TestModel testModel = TestModel.GetInstance();</span><br><span class="line">        testModel.count.AddListener(TestListener,DataListenerType.UPDATE,<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">TestListener</span>(<span class="params"><span class="keyword">int</span> num</span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        Debug.Log(num);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnDestroy</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        testModel.count.RemoveListener(TestListener);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>监听</strong><br>直接向对应的ObservableData添加监听、监听类型、holder即可（holder代表这个监听被哪个实例持有，便于监听的移除）。<br>添加监听后，在修改ObservableData时，就会对对应类型的监听进行调用。<br><strong>移除监听</strong><br>通过监听的委托或holder移除一个监听或所有监听。  </p>
-<h1 id="核心思路"><a href="#核心思路" class="headerlink" title="核心思路"></a>核心思路</h1><p>1.使用泛型将类型封装，在修改数据的同时根据修改的类型通知事件出去。<br>2.使用泛型将监听的回调封装，可以进行统一的监听和移除。<br>3.通过辅助绑定类等辅助类增加ObservableData的易用性。<br>4.在单数据的ObservableData还增加了List类型的Data，使用方法与单数据类似。  </p>
-<h1 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h1><p>为了提高ObservableData的易用性，添加了AssistantBinder、ObserverView。<br><strong>AssistantBinder:</strong> 辅助绑定类，作为一个额外的holder，可对数据和监听进行统一的管理。<br><strong>ObserverView:</strong> 继承自MonoBehaviour，在被销毁时自动对监听进行释放。  </p>
-<h1 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h1><p>整合和数据的存储和事件的通知，化简了观察者模式。<br>1.易于扩展：<br>添加新类型时只用添加新的ObservableData和DataListener即可。<br>2.易于修改：<br>比如在某些项目修改操作希望通知出不同的事件，可以直接修改对应的Set、Get函数。 </p>
-<p><strong>项目链接：</strong><a href="https://github.com/blueberryzzz/ObservableDataDemo" target="_blank" rel="noopener">ObservableDemo</a>  </p>
+        <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>&emsp;&emsp;这是一个用来查找资源引用和依赖的插件，通过缓存来保存资源间的引用信息，通过树状结构直观的展示。<br>&emsp;&emsp;由于是通过缓存进行实现的，所以在希望的到精确的引用信息时需要刷新缓存。不过由于缓存的存在，在资源改动较少的情况下，刷新速度较快，对使用影响较小。<br>&emsp;&emsp;直接将文件夹拖到项目中即可使用。<br><a id="more"></a>  </p>
+<h1 id="使用示例"><a href="#使用示例" class="headerlink" title="使用示例"></a>使用示例</h1><p>&emsp;&emsp;右键需要查找引用的文件或文件夹，点击Find References进行查找。<br><img src="/2019/04/09/ReferenceFinder/Start.png" alt=""><br><strong>按钮含义：</strong><br>Refresh Data:刷新缓存<br>Model:切换引用和依赖<br>NeedUpdateState:是否需要根据当前文件的状态更新State栏。<br>Expand:展开列表<br>Collapse:折叠列表<br><img src="/2019/04/09/ReferenceFinder/SingleSearch.png" alt=""><br><img src="/2019/04/09/ReferenceFinder/BatchSearch.png" alt=""><br>&emsp;&emsp;第三列的State为Changed代表这个资源被修改了，Missing代表资源被删除了，No Data代表缓存中没有该资源的信息。  </p>
+<h1 id="实现方案"><a href="#实现方案" class="headerlink" title="实现方案"></a>实现方案</h1><h2 id="方案选择"><a href="#方案选择" class="headerlink" title="方案选择"></a>方案选择</h2><p>&emsp;&emsp;1.在每次需要查找时进行一次全局查找，保证查找的正确性。但是进行全局查找会很慢，因为查找资源依赖信息的接口GetDependencies本质上其实是对文本的查找(比如prefab中会以文本的形式记录prefab所引用资源的guiid和fileid)，在不进行多线程查询优化的情况下这是一个很慢的过程，存储在机械硬盘上时会更慢。<br>&emsp;&emsp;2.进行一次全局查找生成缓存，在进行查找时直接读取缓存（在资源改动时会出现引用信息不准确的问题），在资源变动时需要更新缓存，保持查找的正确性，不过由于缓存的存在，在资源没有太大的改动的情况下，刷新速度较快。</p>
+<p>&emsp;&emsp;这里选择了方案二。</p>
+<h2 id="查找及缓存"><a href="#查找及缓存" class="headerlink" title="查找及缓存"></a>查找及缓存</h2><p><strong>引用信息的生成:</strong><br>&emsp;&emsp;通过AssetDatabase.GetAllAssetPaths()获取项目中所有的资源路径。<br>&emsp;&emsp;通过AssetDatabase.GetDependencies()获取每一个资源所依赖资源的信息。<br>&emsp;&emsp;经过这两步之后就有了所有资源的依赖信息了。<br>&emsp;&emsp;通过资源的依赖信息，我们就可以生成所有资源的引用信息了。<br><strong>缓存:</strong><br>&emsp;&emsp;为了让缓存尽量的小，所以缓存只保存每个资源的guid、引用资源哈希值、依赖资源的信息。<br>&emsp;&emsp;其中引用资源哈希值时用于判断这个资源依赖的资源是否有修改，若有修改，则在刷新资源引用信息的时候需要重新读取这个资源的依赖信息，否则继续使用该信息。这个判断就是在资源改动较少时减少刷新时间的关键。<br>&emsp;&emsp;在记录依赖时，没有直接记录依赖资源的guid，而是记录了资源在缓存中下标的位置，从而进一步缩小缓存的大小。  </p>
+<h2 id="界面实现"><a href="#界面实现" class="headerlink" title="界面实现"></a>界面实现</h2><p>&emsp;&emsp;主要使用了Unity自带的TreeView实现树形界面的展示。  </p>
+<p><strong>项目链接：</strong><a href="https://github.com/blueberryzzz/ReferenceFinder" target="_blank" rel="noopener">Reference Finder</a> </p>
 
       
     </div>
@@ -362,9 +363,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Unity/" rel="tag"># Unity</a>
-          
-            <a href="/tags/c/" rel="tag"># c#</a>
+            <a href="/tags/unity/" rel="tag"># unity</a>
           
         </div>
       
@@ -377,8 +376,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/11/14/骨骼动画的原理及在Unity中的使用/" rel="next" title="骨骼动画的原理及在Unity中的使用">
-                <i class="fa fa-chevron-left"></i> 骨骼动画的原理及在Unity中的使用
+              <a href="/2018/12/10/ObservableData-另一种姿势的观察者模式/" rel="next" title="ObservableData-另一种姿势的观察者模式">
+                <i class="fa fa-chevron-left"></i> ObservableData-另一种姿势的观察者模式
               </a>
             
           </div>
@@ -386,10 +385,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/04/09/ReferenceFinder/" rel="prev" title="ReferenceFinder">
-                ReferenceFinder <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -514,7 +509,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#使用"><span class="nav-number">1.</span> <span class="nav-text">使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#数据的定义"><span class="nav-number">1.1.</span> <span class="nav-text">数据的定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据的修改"><span class="nav-number">1.2.</span> <span class="nav-text">数据的修改</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据的监听与监听的移除"><span class="nav-number">1.3.</span> <span class="nav-text">数据的监听与监听的移除</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#核心思路"><span class="nav-number">2.</span> <span class="nav-text">核心思路</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#其他"><span class="nav-number">3.</span> <span class="nav-text">其他</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#小结"><span class="nav-number">4.</span> <span class="nav-text">小结</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用示例"><span class="nav-number">2.</span> <span class="nav-text">使用示例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实现方案"><span class="nav-number">3.</span> <span class="nav-text">实现方案</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#方案选择"><span class="nav-number">3.1.</span> <span class="nav-text">方案选择</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查找及缓存"><span class="nav-number">3.2.</span> <span class="nav-text">查找及缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#界面实现"><span class="nav-number">3.3.</span> <span class="nav-text">界面实现</span></a></li></ol></li></ol></div>
             
 
           </div>
