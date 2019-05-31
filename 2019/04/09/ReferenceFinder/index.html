@@ -105,7 +105,7 @@
 <meta property="og:image" content="http://yoursite.com/2019/04/09/ReferenceFinder/Start.png">
 <meta property="og:image" content="http://yoursite.com/2019/04/09/ReferenceFinder/SingleSearch.png">
 <meta property="og:image" content="http://yoursite.com/2019/04/09/ReferenceFinder/BatchSearch.png">
-<meta property="og:updated_time" content="2019-04-08T16:54:06.237Z">
+<meta property="og:updated_time" content="2019-04-08T16:59:18.162Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ReferenceFinder">
 <meta name="twitter:description" content="简介&amp;emsp;&amp;emsp;这是一个用来查找资源引用和依赖的插件，通过缓存来保存资源间的引用信息，通过树状结构直观的展示。&amp;emsp;&amp;emsp;由于是通过缓存进行实现的，所以在希望的到精确的引用信息时需要刷新缓存。不过由于缓存的存在，在资源改动较少的情况下，刷新速度较快，对使用影响较小。&amp;emsp;&amp;emsp;直接将文件夹拖到项目中即可使用。">
@@ -345,7 +345,7 @@
 <p>&emsp;&emsp;这里选择了方案二。</p>
 <h2 id="查找及缓存"><a href="#查找及缓存" class="headerlink" title="查找及缓存"></a>查找及缓存</h2><p><strong>引用信息的生成:</strong><br>&emsp;&emsp;通过AssetDatabase.GetAllAssetPaths()获取项目中所有的资源路径。<br>&emsp;&emsp;通过AssetDatabase.GetDependencies()获取每一个资源所依赖资源的信息。<br>&emsp;&emsp;经过这两步之后就有了所有资源的依赖信息了。<br>&emsp;&emsp;通过资源的依赖信息，我们就可以生成所有资源的引用信息了。<br><strong>缓存:</strong><br>&emsp;&emsp;为了让缓存尽量的小，所以缓存只保存每个资源的guid、引用资源哈希值、依赖资源的信息。<br>&emsp;&emsp;其中引用资源哈希值时用于判断这个资源依赖的资源是否有修改，若有修改，则在刷新资源引用信息的时候需要重新读取这个资源的依赖信息，否则继续使用该信息。这个判断就是在资源改动较少时减少刷新时间的关键。<br>&emsp;&emsp;在记录依赖时，没有直接记录依赖资源的guid，而是记录了资源在缓存中下标的位置，从而进一步缩小缓存的大小。  </p>
 <h2 id="界面实现"><a href="#界面实现" class="headerlink" title="界面实现"></a>界面实现</h2><p>&emsp;&emsp;主要使用了Unity自带的TreeView实现树形界面的展示。  </p>
-<p><strong>项目链接：</strong><a href="https://github.com/blueberryzzz/ReferenceFinder" target="_blank" rel="noopener">Reference Finder</a> </p>
+<p><strong>项目链接：</strong><a href="https://github.com/blueberryzzz/ReferenceFinder" target="_blank" rel="noopener">Reference Finder</a>   </p>
 
       
     </div>
@@ -385,6 +385,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/31/Entitas实现简析/" rel="prev" title="Entitas实现简析">
+                Entitas实现简析 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -461,7 +465,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-count">16</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -474,7 +478,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-count">14</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

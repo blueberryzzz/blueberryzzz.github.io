@@ -78,7 +78,7 @@
 <link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Unity,UGUI," />
+  <meta name="keywords" content="ECS,C#," />
 
 
 
@@ -94,24 +94,20 @@
 
 
 
-<meta name="description" content="ScrollViewScrollView是unity提供的一个方便的滚动视图。">
-<meta name="keywords" content="Unity,UGUI">
+<meta name="description" content="Entitas实现简析&amp;emsp;&amp;emsp;这里主要讲Entitas的执行原理，不讲Entitas的代码生成方面。">
+<meta name="keywords" content="ECS,C#">
 <meta property="og:type" content="article">
-<meta property="og:title" content="UGUI之ScrollView的使用">
-<meta property="og:url" content="http://yoursite.com/2018/11/04/UGUI之ScrollView的使用/index.html">
+<meta property="og:title" content="Entitas实现简析">
+<meta property="og:url" content="http://yoursite.com/2019/05/31/Entitas实现简析/index.html">
 <meta property="og:site_name" content="It&#39;s empty">
-<meta property="og:description" content="ScrollViewScrollView是unity提供的一个方便的滚动视图。">
+<meta property="og:description" content="Entitas实现简析&amp;emsp;&amp;emsp;这里主要讲Entitas的执行原理，不讲Entitas的代码生成方面。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/2018/11/04/UGUI之ScrollView的使用/CreateScrollView.png">
-<meta property="og:image" content="http://yoursite.com/2018/11/04/UGUI之ScrollView的使用/AutoHideAndExpandViewPort.png">
-<meta property="og:image" content="http://yoursite.com/2018/11/04/UGUI之ScrollView的使用/ListDemo1.png">
-<meta property="og:image" content="http://yoursite.com/2018/11/04/UGUI之ScrollView的使用/ListDemo2.png">
-<meta property="og:image" content="http://yoursite.com/2018/11/04/UGUI之ScrollView的使用/ListDemo3.png">
-<meta property="og:updated_time" content="2018-11-04T03:25:51.711Z">
+<meta property="og:image" content="http://yoursite.com/2019/05/31/Entitas实现简析/Entitas.png">
+<meta property="og:updated_time" content="2019-05-31T14:38:35.291Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="UGUI之ScrollView的使用">
-<meta name="twitter:description" content="ScrollViewScrollView是unity提供的一个方便的滚动视图。">
-<meta name="twitter:image" content="http://yoursite.com/2018/11/04/UGUI之ScrollView的使用/CreateScrollView.png">
+<meta name="twitter:title" content="Entitas实现简析">
+<meta name="twitter:description" content="Entitas实现简析&amp;emsp;&amp;emsp;这里主要讲Entitas的执行原理，不讲Entitas的代码生成方面。">
+<meta name="twitter:image" content="http://yoursite.com/2019/05/31/Entitas实现简析/Entitas.png">
 
 
 
@@ -140,13 +136,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/11/04/UGUI之ScrollView的使用/"/>
+  <link rel="canonical" href="http://yoursite.com/2019/05/31/Entitas实现简析/"/>
 
 
 
 
 
-  <title>UGUI之ScrollView的使用 | It's empty</title>
+  <title>Entitas实现简析 | It's empty</title>
   
 
 
@@ -269,7 +265,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/04/UGUI之ScrollView的使用/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/31/Entitas实现简析/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="blueberryzzz">
@@ -286,7 +282,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">UGUI之ScrollView的使用</h1>
+          <h1 class="post-title" itemprop="name headline">Entitas实现简析</h1>
         
 
         <div class="post-meta">
@@ -298,8 +294,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-04T11:23:23+08:00">
-                2018-11-04
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-31T22:31:22+08:00">
+                2019-05-31
               </time>
             
 
@@ -341,12 +337,17 @@
       
 
       
-        <h1 id="ScrollView"><a href="#ScrollView" class="headerlink" title="ScrollView"></a>ScrollView</h1><p>ScrollView是unity提供的一个方便的滚动视图。<br><a id="more"></a>  </p>
-<h1 id="组成"><a href="#组成" class="headerlink" title="组成"></a>组成</h1><p><img src="/2018/11/04/UGUI之ScrollView的使用/CreateScrollView.png" alt=""><br><strong>ScrollView由四个部分组成:</strong></p>
-<h3 id="ViewPort-和-Content"><a href="#ViewPort-和-Content" class="headerlink" title="ViewPort 和 Content"></a>ViewPort 和 Content</h3><p><strong>ScrollView:</strong> 视图范围，Content的Mask，控制Content的显示范围。<br><strong>Content:</strong> 滚动视图的内容容器，一般会配合Layout组件做成一个列表。  </p>
-<h3 id="Scrollbar-Horizontal-和-Scrollbar-Vertical"><a href="#Scrollbar-Horizontal-和-Scrollbar-Vertical" class="headerlink" title="Scrollbar Horizontal 和 Scrollbar Vertical"></a>Scrollbar Horizontal 和 Scrollbar Vertical</h3><p>Content的水平、竖直滚动条。   </p>
-<h1 id="ScrollRect详解"><a href="#ScrollRect详解" class="headerlink" title="ScrollRect详解"></a>ScrollRect详解</h1><p>ScrollRect是ScrollView最核心的Component。用于控制Content的移动等操作。<br><strong>Content:</strong> 滚动视图的内容容器。<br><strong>Horizontal:</strong> 是否允许Content水平滑动。<br><strong>Vertical:</strong> 是否允许Content竖直滑动。<br><strong>MovementType:</strong> 滑动类型<br>&emsp;<strong>1.Unrestricted:</strong> 无滑动限制，可以随意进行滑动，允许Content滑出Viewport区域。<br>&emsp;<strong>2.Elastic:</strong> 弹性滑动，有两个表现<br>&emsp;&emsp;①允许Content被拖出ViewPort区域，但是在被拖出时会对滑动的距离进行修正，比如Content本来应该向下滑动10单位的距离，现在就只会下滑8单位的距离。模拟出拉动弹簧的距离越长，就会越来越费力的感觉。<br>&emsp;&emsp;②当Content被拖出ViewPort区域时停止拖动操作，Content会根据Elasticity参数进行回弹，恢复到刚好未被拖出的状态。<br>&emsp;&emsp;<strong>Elasticity:</strong> 回弹的参数，数值越大，回弹的越慢。<br>&emsp;<strong>3.Clamped:</strong> 严格控制Content不会超出ViewPort的范围。<br><strong>Inertia:</strong> 是否有惯性，DecelerationRate参数越大，拖动结束时Content自动滑动的距离越长。<br><strong>ScrollSensitivity:</strong>  滚轮的敏感度，值越大，滚动滚轮时滑动的距离越长。<br><strong>ViewPort:</strong> 滚动视图的视图范围。<br><strong>Horizontal Scrollbar:</strong> 水平滚动条。<br>&emsp;<strong>Visibility:</strong> 滚动条的可见性。<br>&emsp;<strong>1.Permanent:</strong> 不管Content多大，永久可见。<br>&emsp;<strong>2.Auto Hide:</strong> 当Content的宽度小于等于ViewPort时，不可见。<br>&emsp;<strong>3.Auto Hide And Expand ViewPort:</strong> 当Content的宽度小于等于ViewPort时，不可见。且ViewPort的宽度会随HorizontalScrollbar的宽度和spacing值变化，保持为ScrollView的宽度 - spacing - HorizontalScrollbar的宽度。比如ScrollView宽度为200，HorizontalScrollvar宽度为20，spacing值为-3，那么ViewPort的宽度为200-(-3)-20 = 183。在stretch下表现为W Delta的值为183 - 200 = -17。<br>&emsp;<strong>Spacing:</strong> ScrollBar和ViewPort之间的间隔。<br><strong>Vertical Scrollbar:</strong>  竖直滚动条，参数含义和Horizontal Scrallbar一样，这里就不介绍了。<br><img src="/2018/11/04/UGUI之ScrollView的使用/AutoHideAndExpandViewPort.png" alt="">  </p>
-<h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><p>用一个简单的竖向列表做例子。<br>1.先通过将ScrollRect的Horizontal值设为false限制列表的水平移动，然后给Content添加VerticalLayoutGroup(用于对item的自动竖直布局)，ContentSIzeFitter(用于让Content的高度随Content中item的增多而自动增加)。<br><img src="/2018/11/04/UGUI之ScrollView的使用/ListDemo1.png" alt=""><br>2.给里面加几张图片<br><img src="/2018/11/04/UGUI之ScrollView的使用/ListDemo2.png" alt=""><br>3.因为Content的ContentSizeFitter只有Vertical改为了PreferredSize，所有直接添加的图片宽度会被强制修改为Content的宽度，高取图片Sprite的原始高度。<br>这样子图片就被拉伸的太厉害了，这并不是我们想要的结果，所以我们还希望主动控制每个图片的大小，所以我们给每个图片加上一个LayoutElement，控制图片的大小。<br><img src="/2018/11/04/UGUI之ScrollView的使用/ListDemo3.png" alt=""><br>这样这个列表看着就比较正常了。  </p>
+        <h1 id="Entitas实现简析"><a href="#Entitas实现简析" class="headerlink" title="Entitas实现简析"></a>Entitas实现简析</h1><p>&emsp;&emsp;这里主要讲Entitas的执行原理，不讲Entitas的代码生成方面。<br><a id="more"></a></p>
+<h1 id="ECS简介"><a href="#ECS简介" class="headerlink" title="ECS简介"></a>ECS简介</h1><p>&emsp;&emsp;ECS(实体-组件-系统)是一种常用于游戏开发的架构模式。<br>&emsp;&emsp;<strong>实体：</strong> 实体只是一个ID或一个容器，用来标记或存储一系列组件。<br>&emsp;&emsp;<strong>组件：</strong> 没有任何逻辑，单纯用来存储数据。<br>&emsp;&emsp;<strong>系统：</strong> 循环处理特定的组件。<br>&emsp;&emsp;<strong>ECS主要强调了两个方面：</strong><br>&emsp;&emsp;1.用数据的组合去描述对象，而不是继承。<br>&emsp;&emsp;2.数据和逻辑的分离。  </p>
+<h1 id="Unity中的EC"><a href="#Unity中的EC" class="headerlink" title="Unity中的EC"></a>Unity中的EC</h1><p>&emsp;&emsp;Unity采用了EC的设计思路，和传统ECS不同，Unity的Component除了存储数据，还保留了操作Component中数据的方法。<br>&emsp;&emsp;Unity中的Entiy就是GameObject，Component就是GameObject上挂载的组件各种组件，如Transform。<br>&emsp;&emsp;GameObject是各种Component的容器，本身并没有实际意义(与ECS中Entity的定义略有不同，GameObject包含了tag、name、activeSelf等属性。如果是在纯粹的ECS系统中，tag等属性应该作为Component挂载在GameObject)。<br>&emsp;&emsp;比如场景中的一个Cube，由Transform、MeshFilter、MeshRenderer、BoxCollider四个组件组成。我们能在场景中看到这个Cube是因为Unity从MeshFilter得到了Mesh信息，告诉了GPU这是一个立方体，从MeshRenderer中的到了渲染这个Mesh的信息，告诉GPU这个Mesh上的UV对应的是哪张贴图的坐标，渲染成什么颜色等信息。从Transform中得知了该将这个Cube渲染在哪个位置，旋转多少度等。Unity通过BoxCollider和Transform信息去做碰撞检测。(在Cube的渲染这个例子中，可以把Unity自身看作ECS中的System的集合，因为Unity中的各个模块获取了这个Cube中<strong>特定</strong>Component中的信息，根据这些信息做一些事情)<br>&emsp;&emsp;<strong>Unity中的EC与传统ECS最大的两个区别就是：</strong><br>&emsp;&emsp;1.Entity上带着一些属性数据name、tag等，Component不仅有数据，还集成了大量的方法。比如在Unity中希望旋转一个Transform会直接调用Transform的Rotate方法，而在传统ECS中，很可能是在Cube这个Entity上挂载一个Rotate组件，然后由专门的RotateSystem去处理这个转动。<br>&emsp;&emsp;2.没有System对Component进行统一的处理。  </p>
+<h1 id="Entitas简介"><a href="#Entitas简介" class="headerlink" title="Entitas简介"></a>Entitas简介</h1><p>&emsp;&emsp;Entitas是一个用C#实现的ECS框架，提供了方便的代码生成功能。<br>&emsp;&emsp;用法的介绍官方项目写的比较详细，这里就不多做介绍。  </p>
+<h1 id="Entitas运行流程"><a href="#Entitas运行流程" class="headerlink" title="Entitas运行流程"></a>Entitas运行流程</h1><p><img src="/2019/05/31/Entitas实现简析/Entitas.png" alt=""><br>&emsp;&emsp;也就是说整个ECS系统的内部数据维护(Group、Collector、EntityIndex)复杂度主要放在Entity的修改上了。<br>&emsp;&emsp;在给一个Entity添加一个Component时，不仅仅是对Entity进行了修改，还会通过事件将这个添加传递给Context，Context遍历所有Group，找到满足这次修改条件的Group，对所有受到影响的Group进行修改。然后再通过Group将这次修改事件分发到Collector或其他监听该Group的模块中去。<br>&emsp;&emsp;这种方式带来的好处十分明显，那就是获取一种类型的Entity（也就是一个Group），只有第一次会遍历所有的Entity生成这个Group，之后再获取该类型Entity的复杂度就只有O(1)。<br>&emsp;&emsp;但是也有一定的隐患，当Group和Collector比较少时，这不是一个高消耗操作，但是Group、Collector很多，且在每一帧对Entity进行频繁修改的时候。这可能会成为一个高消耗操作。 </p>
+<h1 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h1><p>&emsp;&emsp;1.在销毁一个Entity时，会移除Entity身上所有的Component，然后再进行回收。在移除Component时可能会通过Group把这个移除事件发送到监听Remove行为的Collector中，Collector会持有这个被销毁的Entity。所以在filter、或execute时不能直接依赖Collector的收集条件，还需要对Entity的Component做独立的判断。<br>&emsp;&emsp;其实任何时候filter都需要对Entity的Component做判断，因为Collector收集的Entity很可能在其他地方被改变。  </p>
+<p>&emsp;&emsp;2.Entity不应该被ECS系统外的模块持有，因为系统外对Entity的持有不会被自动引用计数（可以自己添加）。可能会导致一个Entity被销毁然后又从池子中重新取出来， 外部模块对这个Entity的引用没有改变，但已经可能不是自己持有的那个Entity了。<br>&emsp;&emsp;需要避免在外界持有Entity或通过持有uuid间接从context中持有这个Entity。 </p>
+<p>&emsp;&emsp;3.在replaceComponent时，发送了Remove、Add、Update三个事件，而不是只发送了Update事件。</p>
+<p>&emsp;&emsp;4.在代码生成时，对单Componet的Matcher进行了缓存，如游戏中常用的Postion和Name等Component，但是对组合Component的Matcher没有进行缓存。所在在两个不同的ReactiveSystem中使用Matcher相同的Collector时，如：<br><figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//1,2代表Postion和Name的Index</span></span><br><span class="line"><span class="comment">//在使用代码生成时会生成类似Matcher.Position、Matcher.Name的静态函数，方便开发者使用</span></span><br><span class="line">context.CreateCollector(Matcher.AllOf(<span class="number">1</span>,<span class="number">2</span>));</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;这样会生成两个Matcher相同的Group实例。<br>&emsp;&emsp;如果在意这一点的话可以自己对Matcher进行缓存。  </p>
+<h1 id="写在后面"><a href="#写在后面" class="headerlink" title="写在后面"></a>写在后面</h1><p>&emsp;&emsp;在对ECS架构模式的理解和Entitas的使用上我还是一个新手，只是刚刚开始使用，如果有什么写的不对的地方，各位大佬可以留言指正。  </p>
 
       
     </div>
@@ -364,9 +365,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Unity/" rel="tag"># Unity</a>
+            <a href="/tags/ECS/" rel="tag"># ECS</a>
           
-            <a href="/tags/UGUI/" rel="tag"># UGUI</a>
+            <a href="/tags/C/" rel="tag"># C#</a>
           
         </div>
       
@@ -379,8 +380,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/10/26/ChunkDisappearImage/" rel="next" title="ChunkDisappearImage">
-                <i class="fa fa-chevron-left"></i> ChunkDisappearImage
+              <a href="/2019/04/09/ReferenceFinder/" rel="next" title="ReferenceFinder">
+                <i class="fa fa-chevron-left"></i> ReferenceFinder
               </a>
             
           </div>
@@ -388,10 +389,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/11/14/骨骼动画的原理及在Unity中的使用/" rel="prev" title="骨骼动画的原理及在Unity中的使用">
-                骨骼动画的原理及在Unity中的使用 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -516,7 +513,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ScrollView"><span class="nav-number">1.</span> <span class="nav-text">ScrollView</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#组成"><span class="nav-number">2.</span> <span class="nav-text">组成</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ViewPort-和-Content"><span class="nav-number">2.0.1.</span> <span class="nav-text">ViewPort 和 Content</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Scrollbar-Horizontal-和-Scrollbar-Vertical"><span class="nav-number">2.0.2.</span> <span class="nav-text">Scrollbar Horizontal 和 Scrollbar Vertical</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ScrollRect详解"><span class="nav-number">3.</span> <span class="nav-text">ScrollRect详解</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用"><span class="nav-number">4.</span> <span class="nav-text">使用</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Entitas实现简析"><span class="nav-number">1.</span> <span class="nav-text">Entitas实现简析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ECS简介"><span class="nav-number">2.</span> <span class="nav-text">ECS简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Unity中的EC"><span class="nav-number">3.</span> <span class="nav-text">Unity中的EC</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Entitas简介"><span class="nav-number">4.</span> <span class="nav-text">Entitas简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Entitas运行流程"><span class="nav-number">5.</span> <span class="nav-text">Entitas运行流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Tips"><span class="nav-number">6.</span> <span class="nav-text">Tips</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#写在后面"><span class="nav-number">7.</span> <span class="nav-text">写在后面</span></a></li></ol></div>
             
 
           </div>
