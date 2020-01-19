@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="unity," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="相关组件和类EventSystem1.负责InputModule的切换（因为现在游戏大部分都只有一个StanaloneInputModule，所以切换这部分可以先不考虑）。2.负责InputModule的激活与反激活。">
+<meta name="keywords" content="unity">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unity事件系统EventSystem简析">
+<meta property="og:url" content="http://yoursite.com/2020/01/19/Unity事件系统EventSystem简析/index.html">
+<meta property="og:site_name" content="It&#39;s empty">
+<meta property="og:description" content="相关组件和类EventSystem1.负责InputModule的切换（因为现在游戏大部分都只有一个StanaloneInputModule，所以切换这部分可以先不考虑）。2.负责InputModule的激活与反激活。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2020/01/19/Unity事件系统EventSystem简析/EventSystem.png">
+<meta property="og:image" content="http://yoursite.com/2020/01/19/Unity事件系统EventSystem简析/StandaloneInputModule.png">
+<meta property="og:image" content="http://yoursite.com/2020/01/19/Unity事件系统EventSystem简析/GraphicRaycaster.png">
+<meta property="og:image" content="http://yoursite.com/2020/01/19/Unity事件系统EventSystem简析/PhysicsRaycaster.png">
+<meta property="og:image" content="http://yoursite.com/2020/01/19/Unity事件系统EventSystem简析/ProcessFlow.png">
+<meta property="og:image" content="http://yoursite.com/2020/01/19/Unity事件系统EventSystem简析/EventSystemProcess.png">
+<meta property="og:image" content="http://yoursite.com/2020/01/19/Unity事件系统EventSystem简析/PressProcess.png">
+<meta property="og:updated_time" content="2020-01-19T15:39:52.738Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Unity事件系统EventSystem简析">
+<meta name="twitter:description" content="相关组件和类EventSystem1.负责InputModule的切换（因为现在游戏大部分都只有一个StanaloneInputModule，所以切换这部分可以先不考虑）。2.负责InputModule的激活与反激活。">
+<meta name="twitter:image" content="http://yoursite.com/2020/01/19/Unity事件系统EventSystem简析/EventSystem.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/01/19/Unity事件系统EventSystem简析/"/>
+
+
+
+
+
+  <title>Unity事件系统EventSystem简析 | It's empty</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">It's empty</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/19/Unity事件系统EventSystem简析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="blueberryzzz">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="It's empty">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Unity事件系统EventSystem简析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-01-19T23:31:39+08:00">
+                2020-01-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="相关组件和类"><a href="#相关组件和类" class="headerlink" title="相关组件和类"></a>相关组件和类</h1><h3 id="EventSystem"><a href="#EventSystem" class="headerlink" title="EventSystem"></a>EventSystem</h3><p><img src="/2020/01/19/Unity事件系统EventSystem简析/EventSystem.png" alt=""><br>1.负责InputModule的切换（因为现在游戏大部分都只有一个StanaloneInputModule，所以切换这部分可以先不考虑）。<br>2.负责InputModule的激活与反激活。<br><a id="more"></a><br><strong>3.负责Tick整个事件系统。</strong><br>4.更新InputModule，处理失焦和记录鼠标位置。<br>5.记录一个Selected对象。  </p>
+<h3 id="StandaloneInputModule"><a href="#StandaloneInputModule" class="headerlink" title="StandaloneInputModule"></a>StandaloneInputModule</h3><p><img src="/2020/01/19/Unity事件系统EventSystem简析/StandaloneInputModule.png" alt=""><br><strong>1.处理输入的鼠标或触摸事件，进行事件的分发。</strong><br>2.激活和反激活时负责初始化（选择对象，鼠标位置）和清理无效数据（选择对象、pointerData）。<br>3.不直接使用Input获取数据，而使用一个MonoBehaviour进行封装，提供切换Input的能力（例如游戏进入了反转模式，点左下角时希望右上角有反应。那么重写一个对应的脚本，在进入这个模式时切换Input脚本就可以）。  </p>
+<h3 id="Raycaster"><a href="#Raycaster" class="headerlink" title="Raycaster"></a>Raycaster</h3><p><img src="/2020/01/19/Unity事件系统EventSystem简析/GraphicRaycaster.png" alt=""><br><img src="/2020/01/19/Unity事件系统EventSystem简析/PhysicsRaycaster.png" alt=""><br><strong>1.找到所有被射线检测成功的对象，选排序后第一个对象进行事件分发。</strong>    </p>
+<h3 id="Input类"><a href="#Input类" class="headerlink" title="Input类"></a>Input类</h3><p>1.负责获取和封装外部的输入信息，如点击、重力感应等。<br>2.BaseInput提供和Input类一样的能力，是对Input对象的封装，接口名字都一样，方便输入系统的切换。  </p>
+<h3 id="Touch类"><a href="#Touch类" class="headerlink" title="Touch类"></a>Touch类</h3><p>1.Touch类是一个Touch行为（在屏幕上按下，抬起的过程算一个Touch行为）某一时刻的数据。<br>2.Touch类包含的信息。<br>主要分3部分：</p>
+<p><1>每一个Touch行为从开始到结束，有一个唯一Id  </1></p>
+<p><2>当前这个Touch行为所处在的阶段，一共5个阶段<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> TouchPhase</span><br><span class="line">&#123;</span><br><span class="line">    Began = <span class="number">0</span>,<span class="comment">//按下</span></span><br><span class="line">    Moved = <span class="number">1</span>,<span class="comment">//正在移动</span></span><br><span class="line">    Stationary = <span class="number">2</span>,<span class="comment">//静止，但没有结束</span></span><br><span class="line">    Ended = <span class="number">3</span>,<span class="comment">//离开</span></span><br><span class="line">    Canceled = <span class="number">4</span><span class="comment">//黑屏等其他因素导致的结束</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></2></p>
+<p><3>当前位置，移动距离等信息。<br><strong>3.Touch行为在绝大多数情况下都是由Began开始，Ended或Canceled结束。</strong><br>但是我们并没有监听Touch阶段修改的能力（没找到相关的接口），只能通过Input.GetTouch接口在某一时间点（如update中）来循环获取Touch信息。然后通过FingerId，phase来还原一个完整的Touch行为。但这样会有一个问题，通过GetTouch获取的Touch信息可能是不完整的，如：<br>1.在一个Touch拖动的过程中开始循环调用GetTouch，那么我们得到的Touch就会不是由Began开始的，而是由Moved开始的。<br>2.在帧数很低，且在一帧内连续点击多次时，可能出现相同FingerId的Touch没有通过Ended结束，然后又直接Began的情况。  </3></p>
+<p><strong>所以在将GetTouch获取的数据作为EventSystem的输入数据时，需要将这些特殊情况考虑进去。</strong>  </p>
+<h1 id="运行流程"><a href="#运行流程" class="headerlink" title="运行流程"></a>运行流程</h1><h2 id="总体流程"><a href="#总体流程" class="headerlink" title="总体流程"></a>总体流程</h2><p><img src="/2020/01/19/Unity事件系统EventSystem简析/ProcessFlow.png" alt="">  </p>
+<h2 id="一次StandaloneInputModule-Process处理流程"><a href="#一次StandaloneInputModule-Process处理流程" class="headerlink" title="一次StandaloneInputModule.Process处理流程"></a>一次StandaloneInputModule.Process处理流程</h2><p><strong>以Touch举例</strong><br><img src="/2020/01/19/Unity事件系统EventSystem简析/EventSystemProcess.png" alt=""><br><strong>tips:</strong><br>1.PointerEventData可以理解为对Touch行为的进一步封装，记录了Touch行为信息，如开始位置等，且在此基础上增加了射线检测结果等信息。每一个PointerEventData的生命周期基本上和Touch行为相同。由pressed开始（对应Touch的Began，如缓存中没有对应fingerId的PointerEventData，则新建一个），released结束（对应Touch的Ended或Canceled，从缓存中移除该PointerEventData）。当然对于特殊情况要特殊处理（如上面提到的没有由Began开始的Touch等）。<br>2.Process主要的工作就是维护PointerEventData的数据，同时根据PointerEventData发出事件。<br>3.对事件脚本的查找是向上查找的，如C是B的子节点，B是A的子节点。射线检测的结果是C。那么会按C-&gt;B-&gt;A的顺序去查找可响应该事件的对象。  </p>
+<h2 id="射线检测流程"><a href="#射线检测流程" class="headerlink" title="射线检测流程"></a>射线检测流程</h2><p>这里简单说一下GraphicRaycaster作为举例。  </p>
+<h3 id="GraphicRaycaster的射线检测"><a href="#GraphicRaycaster的射线检测" class="headerlink" title="GraphicRaycaster的射线检测"></a>GraphicRaycaster的射线检测</h3><p>1.GraphicRaycaster是检测同gameobject下canvas中包含的所有Graphic元素是否被射线击中的脚本。<br>2.Graphic在Onenable，OnDisable，OnBeforeTransformParentChanged，OnTransformParentChanged，OnCanvasHierarchyChanged这几个时间点把自己加入或移除一个以canvas为键值的graphic集合的字典中。<br><strong>3.具体检测过程：</strong></p>
+<p><1>先从缓存中获取该Canvas下所有的Graphic对象。  </1></p>
+<p><2>处理多显示器问题，先做一波坐标转换。 </2></p>
+<p><3>根据BlockingObjects，对游戏中的3D或2D对象做一次射线检测，保存离相机最近的对象的距离，之后用于对结果的过滤。  </3></p>
+<p><4>先通过RectangleContainsScreenPoint判断射线击中点是否在Graphic的RectTransform中，再通过Graphic自身的Raycast函数进行进一步的检测（检测CanvasGroup，Active状态等）。  </4></p>
+<p><5>最后再做一些测试，如反转剔除，遮挡测试等。  </5></p>
+<h3 id="射线检测及排序"><a href="#射线检测及排序" class="headerlink" title="射线检测及排序"></a>射线检测及排序</h3><p>1.游戏中所有的Raycaster都进行一次射线检测，获取当前射线击中的所有物体，统一进行排序，选排序后的第一个对象作为射线检测的结果。<br>2.排序规则<br>不同Racaster下：<br>camera.depth<br>Raycaster.sortOrderPriority 针对ScreenSpaceOverlay<br>Raycaster.renderOrderPriority 针对ScreenSpaceOverlay<br>相同Racaster下：<br>sortingLayer<br>sortingOrder<br>depth<br>distance<br>index  </p>
+<h2 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h2><p>在手机上按这个方式操作。<br><img src="/2020/01/19/Unity事件系统EventSystem简析/PressProcess.png" alt=""><br>其中A上的脚本继承了IPointerEnterHandler，IPointerExitHandler，IPointerDownHandler，IPointerUpHandler，IPointerClickHandler，IDragHandler接口。<br>B上的脚本继承了IPointerEnterHandler，IPointerExitHandler, IDropHandler接口。<br><strong>这一系列操作中事件的触发主要依赖于对这几个变量的设置和判定。</strong><br>①pointerPress:按下时射线击中对象或向上查找的某一挂有继承了IPointerDownHandler或IPointerClickHandler脚本的对象。<br>②pointerDrag:按下时射线击中对象或向上查找的某一挂有继承了IDragHandler脚本的对象。<br>③pointerEnter:当前Touch位置发出的射线击中的第一个物体。<br>④pointerCurrentRaycast:当前位置发出射线的计算结果，包括当前击中的物体等信息。<br><strong>1.按下</strong><br><strong>一次完整的touch行为的开始，新生成一个PointerEventData加入缓存中</strong>  </p>
+<p><1>记录pressPosition，用于开始拖动的判定。  </1></p>
+<p><2>因为当前按下的位置在A上，所以设置pointerEnter为A。且A上的脚本继承了IPointerEnterHandler接口，所以执行A上的PointerEnter函数。</2></p>
+<p><3>因为当前按下的位置在A上，且A上的脚本继承了IProinterDownHandler、IPointerDragHandler接口，所以设置pointerPress和pointerDrag为A。用于对后续抬起时的Click等事件做判定。同时执行PointerDown函数。<br><strong>2.拖动</strong><br>在拖动距离超过Threshold之前什么都不做。超过后开始不停的执行pointerDrag(A)对象上的OnDrag函数。<br><strong>3.离开A</strong><br>在离开A时，pointerEnter对象由A变为了null，所以执行pointerEnter(A)对象上的PointerExit函数。<br><strong>4.拖动</strong><br>同2。<br><strong>5.进入B</strong><br>在进入B时，pointerEnter对象由null变为了B，所以执行pointerEnter(B)上的PointerEnter函数。<br><strong>6.抬起</strong><br><strong>touch行为的结束，从缓存中移除这个PointerEventData</strong>  </3></p>
+<p><1>执行pointerPress(A)对象上的PointerUp函数。  </1></p>
+<p><2>由于抬起时射线击中的对象是B,而不是pointerPress(A)对象。所以不执行pointerPress(A)对象上的OnClick函数，而执行B上的OnDrop函数。  </2></p>
+<p><3>执行B上的PointExit函数。  </3></p>
+<h1 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h1><p>1.简单来说EventSysetm的处理过程就是循环获取Touch数据。根据Touch数据来推测完整的Touch行为，来维护对应的PointerEventData，在此基础上进行事件的计算和分发。<br>2.EventSystem的代码量比较少但特殊处理的地方还挺多的，毕竟一个完善的系统，所有情况都得考虑到位。所以阅读代码时可以先看最核心的Process相关的代码（Touch和Mouse先选一个），像InputModule切换、BaseInput的处理、Touch的特殊情况处理这些可以先略过，把握住核心思路之后再看这些部分。  </p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/unity/" rel="tag"># unity</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/31/Entitas实现简析/" rel="next" title="Entitas实现简析">
+                <i class="fa fa-chevron-left"></i> Entitas实现简析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="blueberryzzz" />
+          <p class="site-author-name" itemprop="name">blueberryzzz</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#相关组件和类"><span class="nav-number">1.</span> <span class="nav-text">相关组件和类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#EventSystem"><span class="nav-number">1.0.1.</span> <span class="nav-text">EventSystem</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#StandaloneInputModule"><span class="nav-number">1.0.2.</span> <span class="nav-text">StandaloneInputModule</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Raycaster"><span class="nav-number">1.0.3.</span> <span class="nav-text">Raycaster</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Input类"><span class="nav-number">1.0.4.</span> <span class="nav-text">Input类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Touch类"><span class="nav-number">1.0.5.</span> <span class="nav-text">Touch类</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#运行流程"><span class="nav-number">2.</span> <span class="nav-text">运行流程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#总体流程"><span class="nav-number">2.1.</span> <span class="nav-text">总体流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一次StandaloneInputModule-Process处理流程"><span class="nav-number">2.2.</span> <span class="nav-text">一次StandaloneInputModule.Process处理流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#射线检测流程"><span class="nav-number">2.3.</span> <span class="nav-text">射线检测流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#GraphicRaycaster的射线检测"><span class="nav-number">2.3.1.</span> <span class="nav-text">GraphicRaycaster的射线检测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#射线检测及排序"><span class="nav-number">2.3.2.</span> <span class="nav-text">射线检测及排序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#举例"><span class="nav-number">2.4.</span> <span class="nav-text">举例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#小结"><span class="nav-number">3.</span> <span class="nav-text">小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">blueberryzzz</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Gemini
+  </a>
+</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
